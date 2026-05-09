@@ -13,12 +13,12 @@ import '../screens/profile/profile_binding.dart';
 part 'app_routes.dart';
 
 class AppPages {
-  static const initial = AppRoutes.onboarding;
+  static const initial = AppRoutes.splash;
 
   static final routes = [
     GetPage(
       name: AppRoutes.splash,
-      page: () => const SplashScreen(),
+      page: () => SplashScreen(),
       binding: SplashBinding(),
     ),
     GetPage(
@@ -28,7 +28,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.main,
-      page: () =>  MainScreen(),
+      page: () => MainScreen(),
       transition: Transition.fadeIn,
     ),
     GetPage(

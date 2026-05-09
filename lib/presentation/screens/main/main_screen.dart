@@ -10,14 +10,14 @@ import '../settings/settings_screen.dart';
 import 'main_controller.dart';
 
 class MainScreen extends StatelessWidget {
-  MainScreen({super.key});
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
 
     final screens = [
-      const DashboardScreen(),
+      DashboardScreen(),
       const AnalyticsScreen(),
       const BudgetScreen(),
       SettingsScreen(),

@@ -1,16 +1,69 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../../core/services/database_service.dart';
 
 class DashboardController extends GetxController {
   final currencyFormatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
-  
-  // Dummy Data
-  final totalBalance = 12450.00.obs;
-  final monthlyIncome = 4200.00.obs;
-  final monthlyExpense = 1850.00.obs;
+  final dbService = Get.find<DatabaseService>();
+
+  final totalBalance = 0.0.obs;
+  final monthlyIncome = 0.0.obs;
+  final monthlyExpense = 0.0.obs;
   
   final savingsGoal = 5000.00.obs;
   final savingsCurrent = 3200.00.obs;
+
+  final RxList<double> weeklySpending = <double>[0, 0, 0, 0, 0, 0, 0].obs;
+  final recentTransactions = [].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    final transactions = await dbService.getTransactions();
+    
+    double balance = 0;
+    double income = 0;
+    double expense = 0;
+    
+    List<double> spending = [0, 0, 0, 0, 0, 0, 0];
+    final now = DateTime.now();
+
+    for (var tx in transactions) {
+      balance += tx.amount;
+      
+      // Calculate monthly income/expense
+      if (tx.date.year == now.year && tx.date.month == now.month) {
+        if (tx.amount > 0) {
+          income += tx.amount;
+        } else {
+          expense += tx.amount.abs();
+        }
+      }
+
+      // Calculate weekly spending (last 7 days)
+      final difference = now.difference(tx.date).inDays;
+      if (difference >= 0 && difference < 7 && tx.amount < 0) {
+        spending[6 - difference] += tx.amount.abs();
+      }
+    }
+
+    totalBalance.value = balance;
+    monthlyIncome.value = income;
+    monthlyExpense.value = expense;
+    weeklySpending.assignAll(spending);
+
+    recentTransactions.assignAll(transactions.take(5).map((tx) => {
+      'title': tx.title,
+      'category': tx.category,
+      'amount': tx.amount,
+      'date': tx.date,
+      'icon': tx.icon,
+    }).toList());
+  }
 
   String get greeting {
     var hour = DateTime.now().hour;
@@ -22,38 +75,4 @@ class DashboardController extends GetxController {
     }
     return 'Good Evening';
   }
-
-  // Dummy Chart Data (Days of month, spending amount)
-  final List<double> weeklySpending = [120, 250, 80, 410, 150, 300, 90];
-
-  final recentTransactions = [
-    {
-      'title': 'Apple Music',
-      'category': 'Entertainment',
-      'amount': -10.99,
-      'date': DateTime.now().subtract(const Duration(hours: 2)),
-      'icon': 'music', // mapping to icon later
-    },
-    {
-      'title': 'Whole Foods',
-      'category': 'Groceries',
-      'amount': -85.20,
-      'date': DateTime.now().subtract(const Duration(days: 1)),
-      'icon': 'shoppingBag',
-    },
-    {
-      'title': 'Salary',
-      'category': 'Income',
-      'amount': 4200.00,
-      'date': DateTime.now().subtract(const Duration(days: 2)),
-      'icon': 'briefcase',
-    },
-    {
-      'title': 'Uber',
-      'category': 'Transport',
-      'amount': -24.50,
-      'date': DateTime.now().subtract(const Duration(days: 3)),
-      'icon': 'car',
-    },
-  ].obs;
 }

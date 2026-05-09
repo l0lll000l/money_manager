@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/routes/app_pages.dart';
 
-void main() {
+import 'core/services/database_service.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Get.putAsync(() => DatabaseService().init());
   runApp(const MyApp());
 }
 

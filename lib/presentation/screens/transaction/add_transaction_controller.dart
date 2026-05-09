@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../../core/models/transaction_model.dart';
+import '../../../core/services/database_service.dart';
+import '../dashboard/dashboard_controller.dart';
 
 class AddTransactionController extends GetxController {
   final isIncome = false.obs;
@@ -53,7 +56,7 @@ class AddTransactionController extends GetxController {
     }
   }
 
-  void saveTransaction() {
+  void saveTransaction() async {
     if (amount.value == '0' || amount.value.isEmpty) {
       Get.snackbar('Error', 'Please enter an amount');
       return;
@@ -62,7 +65,29 @@ class AddTransactionController extends GetxController {
       Get.snackbar('Error', 'Please select a category');
       return;
     }
-    // Simulate save
+    
+    final dbService = Get.find<DatabaseService>();
+    final parsedAmount = double.tryParse(amount.value) ?? 0.0;
+    final finalAmount = isIncome.value ? parsedAmount : -parsedAmount;
+    
+    final categoryObj = currentCategories.firstWhere((cat) => cat['name'] == selectedCategory.value);
+    final iconString = categoryObj['icon'] ?? 'moreHorizontal';
+
+    final transaction = TransactionModel(
+      title: noteController.text.isNotEmpty ? noteController.text : selectedCategory.value,
+      category: selectedCategory.value,
+      amount: finalAmount,
+      date: selectedDate.value,
+      icon: iconString,
+    );
+
+    await dbService.insertTransaction(transaction);
+
+    // Refresh Dashboard if it's initialized
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().loadData();
+    }
+
     Get.back();
     Get.snackbar('Success', 'Transaction saved successfully');
   }

@@ -52,10 +52,7 @@ class DashboardScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  'Alex Johnson',
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
+                Text('Athul', style: Theme.of(context).textTheme.headlineLarge),
               ],
             ),
           ),
@@ -69,13 +66,16 @@ class DashboardScreen extends StatelessWidget {
               icon: const Icon(LucideIcons.bell, size: 20),
               onPressed: () {},
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBalanceCard(DashboardController controller, BuildContext context) {
+  Widget _buildBalanceCard(
+    DashboardController controller,
+    BuildContext context,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
@@ -101,12 +101,16 @@ class DashboardScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
-            Obx(() => Text(
-              controller.currencyFormatter.format(controller.totalBalance.value),
-              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                fontSize: 36,
+            Obx(
+              () => Text(
+                controller.currencyFormatter.format(
+                  controller.totalBalance.value,
+                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.displayLarge?.copyWith(fontSize: 36),
               ),
-            )),
+            ),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -120,11 +124,7 @@ class DashboardScreen extends StatelessWidget {
                     controller,
                   ),
                 ),
-                Container(
-                  height: 40,
-                  width: 1,
-                  color: AppTheme.divider,
-                ),
+                Container(height: 40, width: 1, color: AppTheme.divider),
                 Expanded(
                   child: _buildIncomeExpense(
                     context,
@@ -136,14 +136,21 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildIncomeExpense(BuildContext context, String label, double amount, IconData icon, Color color, DashboardController controller) {
+  Widget _buildIncomeExpense(
+    BuildContext context,
+    String label,
+    double amount,
+    IconData icon,
+    Color color,
+    DashboardController controller,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -166,7 +173,7 @@ class DashboardScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -203,7 +210,10 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChartSection(DashboardController controller, BuildContext context) {
+  Widget _buildChartSection(
+    DashboardController controller,
+    BuildContext context,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -230,7 +240,11 @@ class DashboardScreen extends StatelessWidget {
                 maxY: 500,
                 lineBarsData: [
                   LineChartBarData(
-                    spots: controller.weeklySpending.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
+                    spots: controller.weeklySpending
+                        .asMap()
+                        .entries
+                        .map((e) => FlSpot(e.key.toDouble(), e.value))
+                        .toList(),
                     isCurved: true,
                     color: AppTheme.primary,
                     barWidth: 3,
@@ -250,7 +264,10 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentTransactions(DashboardController controller, BuildContext context) {
+  Widget _buildRecentTransactions(
+    DashboardController controller,
+    BuildContext context,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -259,55 +276,73 @@ class DashboardScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Recent Transactions', style: Theme.of(context).textTheme.headlineMedium),
-              TextButton(
-                onPressed: () {},
-                child: const Text('See All'),
+              Text(
+                'Recent Transactions',
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
+              TextButton(onPressed: () {}, child: const Text('See All')),
             ],
           ),
           const SizedBox(height: 8),
-          Obx(() => ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: controller.recentTransactions.length,
-            separatorBuilder: (context, index) => const Divider(),
-            itemBuilder: (context, index) {
-              final tx = controller.recentTransactions[index];
-              final amount = tx['amount'] as double;
-              final isIncome = amount > 0;
-              
-              IconData iconData = LucideIcons.circleDollarSign;
-              if (tx['icon'] == 'music') iconData = LucideIcons.music;
-              if (tx['icon'] == 'shoppingBag') iconData = LucideIcons.shoppingBag;
-              if (tx['icon'] == 'briefcase') iconData = LucideIcons.briefcase;
-              if (tx['icon'] == 'car') iconData = LucideIcons.car;
+          Obx(
+            () => ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: controller.recentTransactions.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final tx = controller.recentTransactions[index];
+                final amount = tx['amount'] as double;
+                final isIncome = amount > 0;
 
-              return ListTile(
-                onTap: () => Get.toNamed('/transaction_details', arguments: tx),
-                contentPadding: EdgeInsets.zero,
-                leading: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceLight,
-                    borderRadius: BorderRadius.circular(16),
+                IconData iconData = LucideIcons.circleDollarSign;
+                if (tx['icon'] == 'music') {
+                  iconData = LucideIcons.music;
+                }
+                if (tx['icon'] == 'shoppingBag') {
+                  iconData = LucideIcons.shoppingBag;
+                }
+                if (tx['icon'] == 'briefcase') {
+                  iconData = LucideIcons.briefcase;
+                }
+                if (tx['icon'] == 'car') {
+                  iconData = LucideIcons.car;
+                }
+
+                return ListTile(
+                  onTap: () =>
+                      Get.toNamed('/transaction_details', arguments: tx),
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceLight,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      iconData,
+                      color: AppTheme.textPrimary,
+                      size: 20,
+                    ),
                   ),
-                  child: Icon(iconData, color: AppTheme.textPrimary, size: 20),
-                ),
-                title: Text(tx['title'] as String, style: Theme.of(context).textTheme.labelLarge),
-                subtitle: Text(
-                  tx['category'] as String,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                trailing: Text(
-                  '${isIncome ? '+' : ''}${controller.currencyFormatter.format(amount)}',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: isIncome ? AppTheme.success : AppTheme.textPrimary,
+                  title: Text(
+                    tx['title'] as String,
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
-                ),
-              );
-            },
-          )),
+                  subtitle: Text(
+                    tx['category'] as String,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  trailing: Text(
+                    '${isIncome ? '+' : ''}${controller.currencyFormatter.format(amount)}',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: isIncome ? AppTheme.success : AppTheme.textPrimary,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

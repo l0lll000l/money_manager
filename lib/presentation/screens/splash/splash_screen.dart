@@ -59,10 +59,7 @@ class SplashScreen extends GetView<SplashController> {
                   builder: (context, double value, child) {
                     return Transform.scale(
                       scale: value,
-                      child: Opacity(
-                        opacity: value,
-                        child: child,
-                      ),
+                      child: Opacity(opacity: value, child: child),
                     );
                   },
                   child: Container(
@@ -93,9 +90,9 @@ class SplashScreen extends GetView<SplashController> {
                 const SizedBox(height: 8),
                 Text(
                   'Elevate your finances',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    letterSpacing: 2,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(letterSpacing: 2),
                 ),
               ],
             ),
