@@ -1,49 +1,60 @@
 import 'package:get/get.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:get_storage/get_storage.dart';
 import '../models/transaction_model.dart';
 
 class DatabaseService extends GetxService {
-  late Database _database;
+  final _storage = GetStorage();
+  final _key = 'transactions';
 
   Future<DatabaseService> init() async {
-    final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, 'money_manager.db');
-
-    _database = await openDatabase(
-      path,
-      version: 1,
-      onCreate: (Database db, int version) async {
-        await db.execute('''
-          CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            category TEXT NOT NULL,
-            amount REAL NOT NULL,
-            date TEXT NOT NULL,
-            icon TEXT NOT NULL
-          )
-        ''');
-      },
-    );
     return this;
   }
 
   Future<int> insertTransaction(TransactionModel transaction) async {
-    return await _database.insert('transactions', transaction.toMap());
+    final transactions = await getTransactions();
+
+    // Auto-increment ID logic
+    int nextId = 1;
+    if (transactions.isNotEmpty) {
+      nextId =
+          transactions.map((t) => t.id ?? 0).reduce((a, b) => a > b ? a : b) +
+          1;
+    }
+
+    final newTransaction = TransactionModel(
+      id: nextId,
+      title: transaction.title,
+      category: transaction.category,
+      amount: transaction.amount,
+      date: transaction.date,
+      icon: transaction.icon,
+    );
+
+    transactions.add(newTransaction);
+    await _saveTransactions(transactions);
+    return nextId;
   }
 
   Future<List<TransactionModel>> getTransactions() async {
-    final List<Map<String, dynamic>> maps = await _database.query(
-      'transactions',
-      orderBy: 'date DESC',
-    );
-    return List.generate(maps.length, (i) {
-      return TransactionModel.fromMap(maps[i]);
-    });
+    final List<dynamic>? rawList = _storage.read<List<dynamic>>(_key);
+    if (rawList == null) return [];
+
+    final transactions = rawList
+        .map((item) => TransactionModel.fromMap(item))
+        .toList();
+    // Sort by date descending
+    transactions.sort((a, b) => b.date.compareTo(a.date));
+    return transactions;
   }
 
   Future<void> deleteTransaction(int id) async {
-    await _database.delete('transactions', where: 'id = ?', whereArgs: [id]);
+    final transactions = await getTransactions();
+    transactions.removeWhere((t) => t.id == id);
+    await _saveTransactions(transactions);
+  }
+
+  Future<void> _saveTransactions(List<TransactionModel> transactions) async {
+    final rawList = transactions.map((t) => t.toMap()).toList();
+    await _storage.write(_key, rawList);
   }
 }

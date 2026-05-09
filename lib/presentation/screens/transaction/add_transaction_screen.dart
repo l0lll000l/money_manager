@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
 import 'add_transaction_controller.dart';
 
@@ -36,6 +37,8 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
                     _buildAmountDisplay(context),
                     const SizedBox(height: 32),
                     _buildCategorySelection(context),
+                    const SizedBox(height: 32),
+                    _buildDateSelection(context),
                     const SizedBox(height: 32),
                     _buildNoteInput(context),
                   ],
@@ -158,6 +161,44 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
           }).toList(),
         )),
       ],
+    );
+  }
+
+  Widget _buildDateSelection(BuildContext context) {
+    return GestureDetector(
+      onTap: () => controller.selectDate(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: AppTheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppTheme.divider),
+        ),
+        child: Row(
+          children: [
+            const Icon(LucideIcons.calendar, color: AppTheme.textSecondary, size: 20),
+            const SizedBox(width: 12),
+            Obx(() {
+              final date = controller.selectedDate.value;
+              final now = DateTime.now();
+              String dateText = DateFormat('MMM d, yyyy').format(date);
+              if (date.year == now.year && date.month == now.month && date.day == now.day) {
+                dateText = 'Today';
+              } else if (date.year == now.year && date.month == now.month && date.day == now.day - 1) {
+                dateText = 'Yesterday';
+              }
+              return Text(
+                dateText,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.textPrimary,
+                ),
+              );
+            }),
+            const Spacer(),
+            const Icon(Icons.arrow_forward_ios, color: AppTheme.textSecondary, size: 16),
+          ],
+        ),
+      ),
     );
   }
 

@@ -112,30 +112,32 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildIncomeExpense(
-                    context,
-                    'Income',
-                    controller.monthlyIncome.value,
-                    LucideIcons.arrowDownLeft,
-                    AppTheme.success,
-                    controller,
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: _buildIncomeExpense(
+                      context,
+                      'Income',
+                      controller.monthlyIncome.value,
+                      LucideIcons.arrowDownLeft,
+                      AppTheme.success,
+                      controller,
+                    ),
                   ),
-                ),
-                Container(height: 40, width: 1, color: AppTheme.divider),
-                Expanded(
-                  child: _buildIncomeExpense(
-                    context,
-                    'Expense',
-                    controller.monthlyExpense.value,
-                    LucideIcons.arrowUpRight,
-                    AppTheme.error,
-                    controller,
+                  Container(height: 40, width: 1, color: AppTheme.divider),
+                  Expanded(
+                    child: _buildIncomeExpense(
+                      context,
+                      'Expense',
+                      controller.monthlyExpense.value,
+                      LucideIcons.arrowUpRight,
+                      AppTheme.error,
+                      controller,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -336,7 +338,7 @@ class DashboardScreen extends StatelessWidget {
                   trailing: Text(
                     '${isIncome ? '+' : ''}${controller.currencyFormatter.format(amount)}',
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: isIncome ? AppTheme.success : AppTheme.textPrimary,
+                      color: isIncome ? AppTheme.success : AppTheme.error,
                     ),
                   ),
                 );

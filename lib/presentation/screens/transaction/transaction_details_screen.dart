@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import 'transaction_details_controller.dart';
 
@@ -11,7 +12,7 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> transaction = controller.transaction;
-    
+
     // Provide default values if transaction data is empty
     final String title = transaction['title'] ?? 'Netflix Subscription';
     final String category = transaction['category'] ?? 'Entertainment';
@@ -19,7 +20,8 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
     final String type = transaction['type'] ?? 'expense';
     final DateTime date = transaction['date'] ?? DateTime.now();
     final String note = transaction['note'] ?? 'Monthly subscription fee';
-    final IconData icon = transaction['icon'] ?? Icons.movie_outlined;
+    final String iconStr = transaction['icon'] ?? 'moreHorizontal';
+    final IconData icon = _getIconForName(iconStr);
     final bool isExpense = type == 'expense';
 
     return Scaffold(
@@ -40,7 +42,11 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
               ),
             ),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+              icon: const Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20,
+              ),
               onPressed: () => Get.back(),
             ),
             actions: [
@@ -68,13 +74,33 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
                   const SizedBox(height: 16),
                   _buildDetailCard(
                     children: [
-                      _buildDetailRow('Status', 'Completed', Icons.check_circle_outline, AppTheme.success),
+                      _buildDetailRow(
+                        'Status',
+                        'Completed',
+                        Icons.check_circle_outline,
+                        AppTheme.success,
+                      ),
                       _buildDivider(),
-                      _buildDetailRow('Category', category, Icons.category_outlined, Colors.white70),
+                      _buildDetailRow(
+                        'Category',
+                        category,
+                        Icons.category_outlined,
+                        Colors.white70,
+                      ),
                       _buildDivider(),
-                      _buildDetailRow('Date', DateFormat('MMM dd, yyyy').format(date), Icons.calendar_today_outlined, Colors.white70),
+                      _buildDetailRow(
+                        'Date',
+                        DateFormat('MMM dd, yyyy').format(date),
+                        Icons.calendar_today_outlined,
+                        Colors.white70,
+                      ),
                       _buildDivider(),
-                      _buildDetailRow('Time', DateFormat('hh:mm a').format(date), Icons.access_time, Colors.white70),
+                      _buildDetailRow(
+                        'Time',
+                        DateFormat('hh:mm a').format(date),
+                        Icons.access_time,
+                        Colors.white70,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 32),
@@ -85,7 +111,11 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.notes, color: Colors.white54, size: 20),
+                          const Icon(
+                            Icons.notes,
+                            color: Colors.white54,
+                            size: 20,
+                          ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
@@ -111,16 +141,18 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
     );
   }
 
-  Widget _buildHeader({required String title, required double amount, required bool isExpense, required IconData icon}) {
+  Widget _buildHeader({
+    required String title,
+    required double amount,
+    required bool isExpense,
+    required IconData icon,
+  }) {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            AppTheme.surfaceLight,
-            AppTheme.background,
-          ],
+          colors: [AppTheme.surfaceLight, AppTheme.background],
         ),
       ),
       child: SafeArea(
@@ -131,10 +163,14 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isExpense ? AppTheme.error.withValues(alpha: 0.1) : AppTheme.success.withValues(alpha: 0.1),
+                color: isExpense
+                    ? AppTheme.error.withValues(alpha: 0.1)
+                    : AppTheme.success.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isExpense ? AppTheme.error.withValues(alpha: 0.3) : AppTheme.success.withValues(alpha: 0.3),
+                  color: isExpense
+                      ? AppTheme.error.withValues(alpha: 0.3)
+                      : AppTheme.success.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -197,15 +233,18 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
               width: 1,
             ),
           ),
-          child: Column(
-            children: children,
-          ),
+          child: Column(children: children),
         ),
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value, IconData icon, Color iconColor) {
+  Widget _buildDetailRow(
+    String label,
+    String value,
+    IconData icon,
+    Color iconColor,
+  ) {
     return Row(
       children: [
         Container(
@@ -219,10 +258,7 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
         const SizedBox(width: 16),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white54,
-            fontSize: 16,
-          ),
+          style: const TextStyle(color: Colors.white54, fontSize: 16),
         ),
         const Spacer(),
         Text(
@@ -240,10 +276,7 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
   Widget _buildDivider() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Divider(
-        color: Colors.white.withValues(alpha: 0.1),
-        height: 1,
-      ),
+      child: Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
     );
   }
 
@@ -253,7 +286,10 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.surfaceLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Delete Transaction', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Delete Transaction',
+          style: TextStyle(color: Colors.white),
+        ),
         content: const Text(
           'Are you sure you want to delete this transaction? This action cannot be undone.',
           style: TextStyle(color: Colors.white70),
@@ -261,17 +297,39 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white54),
+            ),
           ),
           TextButton(
             onPressed: () {
               Get.back();
               controller.deleteTransaction();
             },
-            child: const Text('Delete', style: TextStyle(color: AppTheme.error)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppTheme.error),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  IconData _getIconForName(String iconName) {
+    switch (iconName) {
+      case 'utensils': return LucideIcons.utensils;
+      case 'car': return LucideIcons.car;
+      case 'shoppingBag': return LucideIcons.shoppingBag;
+      case 'film': return LucideIcons.film;
+      case 'activity': return LucideIcons.activity;
+      case 'briefcase': return LucideIcons.briefcase;
+      case 'laptop': return LucideIcons.laptop;
+      case 'gift': return LucideIcons.gift;
+      case 'trendingUp': return LucideIcons.trendingUp;
+      case 'music': return LucideIcons.music;
+      default: return LucideIcons.moreHorizontal;
+    }
   }
 }
