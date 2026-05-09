@@ -4,6 +4,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/services/database_service.dart';
 import '../dashboard/dashboard_controller.dart';
 import '../analytics/analytics_controller.dart';
+import '../budget/budget_controller.dart';
 
 class TransactionDetailsController extends GetxController {
   final Map<String, dynamic> transaction = Get.arguments ?? {};
@@ -22,6 +23,10 @@ class TransactionDetailsController extends GetxController {
       // Refresh Analytics if it's initialized
       if (Get.isRegistered<AnalyticsController>()) {
         Get.find<AnalyticsController>().loadData();
+      }
+      // Refresh Budgets if it's initialized
+      if (Get.isRegistered<BudgetController>()) {
+        Get.find<BudgetController>().loadData();
       }
     }
 

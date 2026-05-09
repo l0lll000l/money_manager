@@ -5,6 +5,8 @@ import '../models/transaction_model.dart';
 class DatabaseService extends GetxService {
   final _storage = GetStorage();
   final _key = 'transactions';
+  final _budgetKey = 'budgets';
+  final _savingsKey = 'savings_goal';
 
   Future<DatabaseService> init() async {
     return this;
@@ -56,5 +58,33 @@ class DatabaseService extends GetxService {
   Future<void> _saveTransactions(List<TransactionModel> transactions) async {
     final rawList = transactions.map((t) => t.toMap()).toList();
     await _storage.write(_key, rawList);
+  }
+
+  // Budget Limits
+  Map<String, dynamic> getBudgetLimits() {
+    return _storage.read<Map<String, dynamic>>(_budgetKey) ?? {};
+  }
+
+  Future<void> saveBudgetLimit(String category, double limit) async {
+    final limits = getBudgetLimits();
+    limits[category] = limit;
+    await _storage.write(_budgetKey, limits);
+  }
+
+  // Savings Goal
+  Map<String, dynamic> getSavingsGoal() {
+    return _storage.read<Map<String, dynamic>>(_savingsKey) ?? {
+      'title': 'New Goal',
+      'target': 1000.0,
+      'saved': 0.0,
+    };
+  }
+
+  Future<void> saveSavingsGoal(String title, double target, double saved) async {
+    await _storage.write(_savingsKey, {
+      'title': title,
+      'target': target,
+      'saved': saved,
+    });
   }
 }

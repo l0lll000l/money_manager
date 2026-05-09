@@ -4,6 +4,7 @@ import '../../../core/models/transaction_model.dart';
 import '../../../core/services/database_service.dart';
 import '../dashboard/dashboard_controller.dart';
 import '../analytics/analytics_controller.dart';
+import '../budget/budget_controller.dart';
 
 class AddTransactionController extends GetxController {
   final isIncome = false.obs;
@@ -103,6 +104,10 @@ class AddTransactionController extends GetxController {
     // Refresh Analytics if it's initialized
     if (Get.isRegistered<AnalyticsController>()) {
       Get.find<AnalyticsController>().loadData();
+    }
+    // Refresh Budgets if it's initialized
+    if (Get.isRegistered<BudgetController>()) {
+      Get.find<BudgetController>().loadData();
     }
 
     Get.back();
