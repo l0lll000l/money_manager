@@ -5,7 +5,8 @@ class AnalyticsController extends GetxController {
   final dbService = Get.find<DatabaseService>();
   final currentPeriod = 'This Month'.obs;
   
-  final periods = ['This Week', 'This Month', 'This Year'].obs;
+  final periods = ['This Week', 'This Month', 'This Year', 'Select Month'].obs;
+  DateTime? customMonthDate;
 
   final expenseByCategory = <Map<String, dynamic>>[].obs;
   final totalExpense = 0.0.obs;
@@ -29,7 +30,25 @@ class AnalyticsController extends GetxController {
 
   void setPeriod(String period) {
     currentPeriod.value = period;
+    if (period != periods[3]) {
+      periods[3] = 'Select Month';
+      customMonthDate = null;
+    }
     loadData();
+  }
+
+  void setCustomMonth(DateTime date) {
+    customMonthDate = date;
+    // We import intl below if not already imported
+    final monthStr = _formatMonth(date);
+    periods[3] = monthStr;
+    currentPeriod.value = monthStr;
+    loadData();
+  }
+
+  String _formatMonth(DateTime date) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${months[date.month - 1]} ${date.year}';
   }
 
   Future<void> loadData() async {
@@ -48,6 +67,8 @@ class AnalyticsController extends GetxController {
         return tx.date.year == now.year && tx.date.month == now.month;
       } else if (currentPeriod.value == 'This Year') {
         return tx.date.year == now.year;
+      } else if (customMonthDate != null) {
+        return tx.date.year == customMonthDate!.year && tx.date.month == customMonthDate!.month;
       }
       return false;
     }).toList();
