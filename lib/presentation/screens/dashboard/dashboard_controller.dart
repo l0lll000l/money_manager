@@ -57,6 +57,7 @@ class DashboardController extends GetxController {
     weeklySpending.assignAll(spending);
 
     recentTransactions.assignAll(transactions.take(5).map((tx) => {
+      'id': tx.id,
       'title': tx.title,
       'category': tx.category,
       'amount': tx.amount,

@@ -2,7 +2,9 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../../core/models/transaction_model.dart';
 import '../../../core/services/database_service.dart';
+import '../../../core/services/database_service.dart';
 import '../dashboard/dashboard_controller.dart';
+import '../analytics/analytics_controller.dart';
 
 class AddTransactionController extends GetxController {
   final isIncome = false.obs;
@@ -98,6 +100,10 @@ class AddTransactionController extends GetxController {
     // Refresh Dashboard if it's initialized
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().loadData();
+    }
+    // Refresh Analytics if it's initialized
+    if (Get.isRegistered<AnalyticsController>()) {
+      Get.find<AnalyticsController>().loadData();
     }
 
     Get.back();
