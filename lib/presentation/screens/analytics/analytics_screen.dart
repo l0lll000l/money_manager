@@ -55,7 +55,13 @@ class AnalyticsScreen extends StatelessWidget {
             final isSelected = controller.currentPeriod.value == period;
             return Expanded(
               child: GestureDetector(
-                onTap: () => controller.setPeriod(period),
+                onTap: () {
+                  if (period == controller.periods[3]) {
+                    _showMonthPicker(context, controller);
+                  } else {
+                    controller.setPeriod(period);
+                  }
+                },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(vertical: 12),
