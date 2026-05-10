@@ -4,7 +4,7 @@ import '../../../core/services/database_service.dart';
 class AnalyticsController extends GetxController {
   final dbService = Get.find<DatabaseService>();
   final currentPeriod = 'This Month'.obs;
-  
+
   final periods = ['This Week', 'This Month', 'This Year', 'Select Month'].obs;
   DateTime? customMonthDate;
 
@@ -47,7 +47,20 @@ class AnalyticsController extends GetxController {
   }
 
   String _formatMonth(DateTime date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return '${months[date.month - 1]} ${date.year}';
   }
 
@@ -58,7 +71,7 @@ class AnalyticsController extends GetxController {
     // Filter transactions by period
     final filteredTransactions = transactions.where((tx) {
       if (tx.amount >= 0) return false; // Only expenses
-      
+
       if (currentPeriod.value == 'This Week') {
         // Last 7 days including today
         final difference = now.difference(tx.date).inDays;
@@ -68,7 +81,8 @@ class AnalyticsController extends GetxController {
       } else if (currentPeriod.value == 'This Year') {
         return tx.date.year == now.year;
       } else if (customMonthDate != null) {
-        return tx.date.year == customMonthDate!.year && tx.date.month == customMonthDate!.month;
+        return tx.date.year == customMonthDate!.year &&
+            tx.date.month == customMonthDate!.month;
       }
       return false;
     }).toList();

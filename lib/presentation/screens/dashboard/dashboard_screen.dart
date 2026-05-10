@@ -43,7 +43,52 @@ class DashboardScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () => Get.toNamed('/profile'),
+            onTap: () {
+              final TextEditingController nameController =
+                  TextEditingController(text: controller.userName.value);
+              Get.dialog(
+                AlertDialog(
+                  backgroundColor: AppTheme.surface,
+                  title: Text(
+                    'Edit Name',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  content: TextField(
+                    controller: nameController,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    decoration: InputDecoration(
+                      hintText: 'Enter your name',
+                      hintStyle: Theme.of(context).textTheme.bodyMedium,
+                      enabledBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppTheme.divider),
+                      ),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppTheme.primary),
+                      ),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Get.back(),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: AppTheme.textSecondary),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        controller.updateUserName(nameController.text);
+                        Get.back();
+                      },
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(color: AppTheme.primary),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -52,7 +97,22 @@ class DashboardScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
-                Text('Athul', style: Theme.of(context).textTheme.headlineLarge),
+                Row(
+                  children: [
+                    Obx(
+                      () => Text(
+                        controller.userName.value,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(
+                      LucideIcons.edit2,
+                      size: 16,
+                      color: AppTheme.textSecondary,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -329,6 +389,12 @@ class DashboardScreen extends StatelessWidget {
                 }
                 if (tx['icon'] == 'moreHorizontal') {
                   iconData = LucideIcons.moreHorizontal;
+                }
+                if (tx['icon'] == 'laptop') {
+                  iconData = LucideIcons.laptop;
+                }
+                if (tx['icon'] == 'gift') {
+                  iconData = LucideIcons.gift;
                 }
 
                 return ListTile(

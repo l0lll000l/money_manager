@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../core/services/database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardController extends GetxController {
   final currencyFormatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
@@ -15,11 +16,25 @@ class DashboardController extends GetxController {
 
   final RxList<double> weeklySpending = <double>[0, 0, 0, 0, 0, 0, 0].obs;
   final recentTransactions = [].obs;
+  final userName = 'User'.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadData();
+    loadUserName();
+  }
+
+  Future<void> loadUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    userName.value = prefs.getString('user_name') ?? 'User';
+  }
+
+  Future<void> updateUserName(String newName) async {
+    if (newName.trim().isEmpty) return;
+    userName.value = newName.trim();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', userName.value);
   }
 
   Future<void> loadData() async {
