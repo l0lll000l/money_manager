@@ -7,6 +7,8 @@ import '../screens/transaction/add_transaction_screen.dart';
 import '../screens/transaction/add_transaction_binding.dart';
 import '../screens/transaction/transaction_details_screen.dart';
 import '../screens/transaction/transaction_details_binding.dart';
+import '../screens/transaction/all_transactions_screen.dart';
+import '../screens/transaction/all_transactions_binding.dart';
 
 part 'app_routes.dart';
 
@@ -39,6 +41,12 @@ class AppPages {
       name: AppRoutes.transactionDetails,
       page: () => const TransactionDetailsScreen(),
       binding: TransactionDetailsBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.allTransactions,
+      page: () => const AllTransactionsScreen(),
+      binding: AllTransactionsBinding(),
       transition: Transition.rightToLeft,
     ),
   ];

@@ -350,7 +350,10 @@ class DashboardScreen extends StatelessWidget {
                 'Recent Transactions',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
-              TextButton(onPressed: () {}, child: const Text('See All')),
+              TextButton(
+                onPressed: () => Get.toNamed('/all_transactions'),
+                child: const Text('See All'),
+              ),
             ],
           ),
           const SizedBox(height: 8),
