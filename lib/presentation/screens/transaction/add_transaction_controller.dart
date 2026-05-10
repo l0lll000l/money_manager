@@ -30,7 +30,8 @@ class AddTransactionController extends GetxController {
     {'name': 'Other', 'icon': 'moreHorizontal'},
   ];
 
-  List<Map<String, String>> get currentCategories => isIncome.value ? incomeCategories : expenseCategories;
+  List<Map<String, String>> get currentCategories =>
+      isIncome.value ? incomeCategories : expenseCategories;
 
   void toggleType(bool income) {
     isIncome.value = income;
@@ -79,16 +80,20 @@ class AddTransactionController extends GetxController {
       Get.snackbar('Error', 'Please select a category');
       return;
     }
-    
+
     final dbService = Get.find<DatabaseService>();
     final parsedAmount = double.tryParse(amount.value) ?? 0.0;
     final finalAmount = isIncome.value ? parsedAmount : -parsedAmount;
-    
-    final categoryObj = currentCategories.firstWhere((cat) => cat['name'] == selectedCategory.value);
+
+    final categoryObj = currentCategories.firstWhere(
+      (cat) => cat['name'] == selectedCategory.value,
+    );
     final iconString = categoryObj['icon'] ?? 'moreHorizontal';
 
     final transaction = TransactionModel(
-      title: noteController.text.isNotEmpty ? noteController.text : selectedCategory.value,
+      title: noteController.text.isNotEmpty
+          ? noteController.text
+          : selectedCategory.value,
       category: selectedCategory.value,
       amount: finalAmount,
       date: selectedDate.value,

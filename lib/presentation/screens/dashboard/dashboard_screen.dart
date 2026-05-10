@@ -231,35 +231,43 @@ class DashboardScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: AppTheme.divider),
             ),
-            child: LineChart(
-              LineChartData(
-                gridData: const FlGridData(show: false),
-                titlesData: const FlTitlesData(show: false),
-                borderData: FlBorderData(show: false),
-                minX: 0,
-                maxX: 6,
-                minY: 0,
-                maxY: 500,
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: controller.weeklySpending
-                        .asMap()
-                        .entries
-                        .map((e) => FlSpot(e.key.toDouble(), e.value))
-                        .toList(),
-                    isCurved: true,
-                    color: AppTheme.primary,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: AppTheme.primary.withValues(alpha: 0.1),
+            child: Obx(() {
+              final maxSpending = controller.weeklySpending.isEmpty
+                  ? 500.0
+                  : controller.weeklySpending.reduce((a, b) => a > b ? a : b);
+              // Add 20% padding to the top of the chart
+              final dynamicMaxY = maxSpending > 0 ? maxSpending * 1.2 : 500.0;
+
+              return LineChart(
+                LineChartData(
+                  gridData: const FlGridData(show: false),
+                  titlesData: const FlTitlesData(show: false),
+                  borderData: FlBorderData(show: false),
+                  minX: 0,
+                  maxX: 6,
+                  minY: 0,
+                  maxY: dynamicMaxY,
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: controller.weeklySpending
+                          .asMap()
+                          .entries
+                          .map((e) => FlSpot(e.key.toDouble(), e.value))
+                          .toList(),
+                      isCurved: true,
+                      color: AppTheme.primary,
+                      barWidth: 3,
+                      isStrokeCapRound: true,
+                      dotData: const FlDotData(show: false),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: AppTheme.primary.withValues(alpha: 0.1),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            }),
           ),
         ],
       ),
