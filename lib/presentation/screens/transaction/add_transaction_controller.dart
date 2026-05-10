@@ -13,6 +13,24 @@ class AddTransactionController extends GetxController {
   final noteController = TextEditingController();
   final selectedDate = DateTime.now().obs;
 
+  final isEditing = false.obs;
+  int? editingId;
+
+  @override
+  void onInit() {
+    super.onInit();
+    if (Get.arguments != null) {
+      isEditing.value = true;
+      final tx = Get.arguments as Map<String, dynamic>;
+      editingId = tx['id'];
+      amount.value = (tx['amount'] as double).abs().toString();
+      isIncome.value = (tx['amount'] as double) > 0;
+      selectedCategory.value = tx['category'];
+      noteController.text = tx['title'];
+      selectedDate.value = tx['date'] as DateTime;
+    }
+  }
+
   final expenseCategories = [
     {'name': 'Food', 'icon': 'utensils'},
     {'name': 'Transport', 'icon': 'car'},
@@ -91,6 +109,7 @@ class AddTransactionController extends GetxController {
     final iconString = categoryObj['icon'] ?? 'moreHorizontal';
 
     final transaction = TransactionModel(
+      id: editingId,
       title: noteController.text.isNotEmpty
           ? noteController.text
           : selectedCategory.value,
@@ -100,7 +119,11 @@ class AddTransactionController extends GetxController {
       icon: iconString,
     );
 
-    await dbService.insertTransaction(transaction);
+    if (isEditing.value) {
+      await dbService.updateTransaction(transaction);
+    } else {
+      await dbService.insertTransaction(transaction);
+    }
 
     // Refresh Dashboard if it's initialized
     if (Get.isRegistered<DashboardController>()) {
@@ -115,7 +138,7 @@ class AddTransactionController extends GetxController {
       Get.find<BudgetController>().loadData();
     }
 
-    Get.back();
+    Get.back(result: true);
     // Get.snackbar('Success', 'Transaction saved successfully');
   }
 }

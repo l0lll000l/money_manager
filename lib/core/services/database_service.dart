@@ -37,6 +37,15 @@ class DatabaseService extends GetxService {
     return nextId;
   }
 
+  Future<void> updateTransaction(TransactionModel updatedTransaction) async {
+    final transactions = await getTransactions();
+    final index = transactions.indexWhere((t) => t.id == updatedTransaction.id);
+    if (index != -1) {
+      transactions[index] = updatedTransaction;
+      await _saveTransactions(transactions);
+    }
+  }
+
   Future<List<TransactionModel>> getTransactions() async {
     final List<dynamic>? rawList = _storage.read<List<dynamic>>(_key);
     if (rawList == null) return [];

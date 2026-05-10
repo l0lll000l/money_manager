@@ -53,8 +53,14 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.edit_outlined, color: Colors.white),
-                onPressed: () {
-                  // Edit logic here
+                onPressed: () async {
+                  final result = await Get.toNamed(
+                    '/add_transaction',
+                    arguments: transaction,
+                  );
+                  if (result == true) {
+                    Get.back(); // Return to dashboard where it will be refreshed
+                  }
                 },
               ),
               IconButton(
