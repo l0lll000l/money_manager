@@ -8,14 +8,14 @@ class BudgetController extends GetxController {
   final savingsGoal = <String, dynamic>{}.obs;
 
   final Map<String, Map<String, String>> categoryMeta = {
-    'Food': {'icon': 'utensils', 'color': '#EF4444'},
-    'Transport': {'icon': 'car', 'color': '#EC4899'},
-    'Shopping': {'icon': 'shoppingBag', 'color': '#8B5CF6'},
-    'Entertainment': {'icon': 'film', 'color': '#F59E0B'},
+    'Food': {'icon': 'utensils', 'color': '#F59E0B'},
+    'Transport': {'icon': 'car', 'color': '#EF4444'},
+    'Shopping': {'icon': 'shoppingBag', 'color': '#EC4899'},
+    'Entertainment': {'icon': 'film', 'color': '#10B981'},
     'Health': {'icon': 'activity', 'color': '#3B82F6'},
     'Work': {'icon': 'briefcase', 'color': '#F59E0B'},
     'Electronics': {'icon': 'laptop', 'color': '#F97316'},
-    'Other': {'icon': 'moreHorizontal', 'color': '#10B981'},
+    'Other': {'icon': 'moreHorizontal', 'color': '#8B5CF6'},
   };
 
   @override
