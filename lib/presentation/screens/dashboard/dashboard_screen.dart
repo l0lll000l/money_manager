@@ -318,6 +318,18 @@ class DashboardScreen extends StatelessWidget {
                 if (tx['icon'] == 'car') {
                   iconData = LucideIcons.car;
                 }
+                if (tx['icon'] == 'utensils') {
+                  iconData = LucideIcons.utensils;
+                }
+                if (tx['icon'] == 'film') {
+                  iconData = LucideIcons.film;
+                }
+                if (tx['icon'] == 'activity') {
+                  iconData = LucideIcons.activity;
+                }
+                if (tx['icon'] == 'moreHorizontal') {
+                  iconData = LucideIcons.moreHorizontal;
+                }
 
                 return ListTile(
                   onTap: () =>

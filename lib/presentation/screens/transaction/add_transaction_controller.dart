@@ -116,6 +116,6 @@ class AddTransactionController extends GetxController {
     }
 
     Get.back();
-    Get.snackbar('Success', 'Transaction saved successfully');
+    // Get.snackbar('Success', 'Transaction saved successfully');
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:money_manager/presentation/screens/dashboard/dashboard_controller.dart';
 import '../../../core/theme/app_theme.dart';
 import 'transaction_details_controller.dart';
 
@@ -14,16 +15,15 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
     final Map<String, dynamic> transaction = controller.transaction;
 
     // Provide default values if transaction data is empty
-    final String title = transaction['title'] ?? 'Netflix Subscription';
-    final String category = transaction['category'] ?? 'Entertainment';
-    final double amount = transaction['amount'] ?? 15.99;
-    final String type = transaction['type'] ?? 'expense';
+    final String title = transaction['title'] ?? '';
+    final String category = transaction['category'] ?? '';
+    final double amount = transaction['amount'] ?? 0;
     final DateTime date = transaction['date'] ?? DateTime.now();
-    final String note = transaction['note'] ?? 'Monthly subscription fee';
-    final String iconStr = transaction['icon'] ?? 'moreHorizontal';
+    final String note = transaction['note'] ?? '';
+    final String iconStr = transaction['icon'] ?? '';
     final IconData icon = _getIconForName(iconStr);
-    final bool isExpense = type == 'expense';
-
+    final bool isExpense = amount < 0;
+    final dashboardcontroller = Get.put(DashboardController());
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: CustomScrollView(
@@ -39,6 +39,7 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
                 amount: amount,
                 isExpense: isExpense,
                 icon: icon,
+                dashboardcontroller: dashboardcontroller,
               ),
             ),
             leading: IconButton(
@@ -146,6 +147,7 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
     required double amount,
     required bool isExpense,
     required IconData icon,
+    required DashboardController dashboardcontroller,
   }) {
     return Container(
       decoration: const BoxDecoration(
@@ -192,7 +194,7 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${isExpense ? '-' : '+'}\$${amount.toStringAsFixed(2)}',
+              '${isExpense ? '' : '+'}${dashboardcontroller.currencyFormatter.format(amount)}',
               style: TextStyle(
                 color: isExpense ? Colors.white : AppTheme.success,
                 fontSize: 40,
@@ -319,17 +321,28 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
 
   IconData _getIconForName(String iconName) {
     switch (iconName) {
-      case 'utensils': return LucideIcons.utensils;
-      case 'car': return LucideIcons.car;
-      case 'shoppingBag': return LucideIcons.shoppingBag;
-      case 'film': return LucideIcons.film;
-      case 'activity': return LucideIcons.activity;
-      case 'briefcase': return LucideIcons.briefcase;
-      case 'laptop': return LucideIcons.laptop;
-      case 'gift': return LucideIcons.gift;
-      case 'trendingUp': return LucideIcons.trendingUp;
-      case 'music': return LucideIcons.music;
-      default: return LucideIcons.moreHorizontal;
+      case 'utensils':
+        return LucideIcons.utensils;
+      case 'car':
+        return LucideIcons.car;
+      case 'shoppingBag':
+        return LucideIcons.shoppingBag;
+      case 'film':
+        return LucideIcons.film;
+      case 'activity':
+        return LucideIcons.activity;
+      case 'briefcase':
+        return LucideIcons.briefcase;
+      case 'laptop':
+        return LucideIcons.laptop;
+      case 'gift':
+        return LucideIcons.gift;
+      case 'trendingUp':
+        return LucideIcons.trendingUp;
+      case 'music':
+        return LucideIcons.music;
+      default:
+        return LucideIcons.moreHorizontal;
     }
   }
 }
