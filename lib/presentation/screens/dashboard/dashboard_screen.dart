@@ -417,11 +417,11 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                   title: Text(
-                    tx['title'] as String,
+                    tx['category'] as String,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   subtitle: Text(
-                    tx['category'] as String,
+                    tx['title'] as String,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   trailing: Text(

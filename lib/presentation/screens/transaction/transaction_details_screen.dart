@@ -126,7 +126,7 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              note,
+                              title,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

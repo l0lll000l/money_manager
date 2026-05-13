@@ -11,12 +11,12 @@ class AppTheme {
   static const Color success = Color(0xFF10B981); // Vibrant Green
   static const Color error = Color(0xFFEF4444); // Vibrant Red
   static const Color warning = Color(0xFFF59E0B); // Vibrant Orange
-  
+
   static const Color textPrimary = Color(0xFFF8FAFC); // Very light grey
   static const Color textSecondary = Color(0xFF94A3B8); // Muted grey
-  
+
   static const Color divider = Color(0xFF2A303C);
-  
+
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
@@ -49,23 +49,55 @@ class AppTheme {
       ),
       fontFamily: GoogleFonts.outfit().fontFamily,
       textTheme: GoogleFonts.outfitTextTheme().copyWith(
-        displayLarge: const TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 32),
-        displayMedium: const TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 28),
-        displaySmall: const TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 24),
-        headlineLarge: const TextStyle(color: textPrimary, fontWeight: FontWeight.w600, fontSize: 20),
-        headlineMedium: const TextStyle(color: textPrimary, fontWeight: FontWeight.w600, fontSize: 18),
-        headlineSmall: const TextStyle(color: textPrimary, fontWeight: FontWeight.w600, fontSize: 16),
+        displayLarge: const TextStyle(
+          color: textPrimary,
+          fontWeight: FontWeight.bold,
+          fontSize: 32,
+        ),
+        displayMedium: const TextStyle(
+          color: textPrimary,
+          fontWeight: FontWeight.bold,
+          fontSize: 28,
+        ),
+        displaySmall: const TextStyle(
+          color: textPrimary,
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+        ),
+        headlineLarge: const TextStyle(
+          color: textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 20,
+        ),
+        headlineMedium: const TextStyle(
+          color: textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 18,
+        ),
+        headlineSmall: const TextStyle(
+          color: textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
         bodyLarge: const TextStyle(color: textPrimary, fontSize: 16),
         bodyMedium: const TextStyle(color: textSecondary, fontSize: 14),
         bodySmall: const TextStyle(color: textSecondary, fontSize: 12),
-        labelLarge: const TextStyle(color: textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+        labelLarge: const TextStyle(
+          color: textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         iconTheme: IconThemeData(color: textPrimary),
-        titleTextStyle: TextStyle(color: textPrimary, fontSize: 18, fontWeight: FontWeight.w600),
+        titleTextStyle: TextStyle(
+          color: textPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       cardTheme: CardThemeData(
         color: surface,
@@ -81,7 +113,9 @@ class AppTheme {
           foregroundColor: textPrimary,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
@@ -94,7 +128,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surfaceLight,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
