@@ -19,7 +19,6 @@ class TransactionDetailsScreen extends GetView<TransactionDetailsController> {
     final String category = transaction['category'] ?? '';
     final double amount = transaction['amount'] ?? 0;
     final DateTime date = transaction['date'] ?? DateTime.now();
-    final String note = transaction['note'] ?? '';
     final String iconStr = transaction['icon'] ?? '';
     final IconData icon = _getIconForName(iconStr);
     final bool isExpense = amount < 0;

@@ -70,19 +70,19 @@ class SettingsScreen extends StatelessWidget {
                 _buildNavigationTile(
                   icon: Icons.help_outline,
                   title: 'Help & Support',
-                  onTap: () {},
+                  onTap: () => Get.toNamed('/help_support'),
                 ),
                 _buildDivider(),
                 _buildNavigationTile(
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy Policy',
-                  onTap: () {},
+                  onTap: () => Get.toNamed('/privacy_policy'),
                 ),
                 _buildDivider(),
                 _buildNavigationTile(
                   icon: Icons.info_outline,
                   title: 'Terms of Service',
-                  onTap: () {},
+                  onTap: () => Get.toNamed('/terms_of_service'),
                 ),
               ],
             ),

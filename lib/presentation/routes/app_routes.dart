@@ -9,4 +9,7 @@ abstract class AppRoutes {
   static const profile = '/profile';
   static const allTransactions = '/all_transactions';
   static const notifications = '/notifications';
+  static const helpSupport = '/help_support';
+  static const privacyPolicy = '/privacy_policy';
+  static const termsOfService = '/terms_of_service';
 }
