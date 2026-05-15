@@ -22,18 +22,84 @@ class AnalyticsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildTypeToggle(controller, context),
+              const SizedBox(height: 24),
               _buildPeriodSelector(controller, context),
               const SizedBox(height: 32),
               _buildChartSection(controller, context, formatter),
               const SizedBox(height: 32),
-              Text(
-                'Spending Breakdown',
+              Obx(() => Text(
+                controller.transactionType.value == 'Expense'
+                    ? 'Spending Breakdown'
+                    : 'Income Breakdown',
                 style: Theme.of(context).textTheme.headlineMedium,
-              ),
+              )),
               const SizedBox(height: 16),
               _buildCategoryList(controller, context, formatter),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypeToggle(
+    AnalyticsController controller,
+    BuildContext context,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceLight,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Obx(
+        () => Row(
+          children: ['Expense', 'Income'].map((type) {
+            final isSelected = controller.transactionType.value == type;
+            final isExpense = type == 'Expense';
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  controller.transactionType.value = type;
+                  controller.loadData();
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? (isExpense ? AppTheme.error : AppTheme.success)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: (isExpense
+                                      ? AppTheme.error
+                                      : AppTheme.success)
+                                  .withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Text(
+                    type,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: isSelected
+                              ? Colors.white
+                              : AppTheme.textSecondary,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ),
     );
@@ -49,49 +115,53 @@ class AnalyticsScreen extends StatelessWidget {
         color: AppTheme.surfaceLight,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: Obx(
-        () => Row(
-          children: controller.periods.map((period) {
-            final isSelected = controller.currentPeriod.value == period;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  if (period == controller.periods[3]) {
-                    _showMonthPicker(context, controller);
-                  } else {
-                    controller.setPeriod(period);
-                  }
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primary : Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: AppTheme.primary.withValues(alpha: 0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Text(
-                    period,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: isSelected ? Colors.white : AppTheme.textSecondary,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.normal,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Obx(
+          () => Row(
+            children: controller.periods.map((period) {
+              final isSelected = controller.currentPeriod.value == period;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: GestureDetector(
+                  onTap: () {
+                    if (period == controller.periods[4]) {
+                      _showMonthPicker(context, controller);
+                    } else {
+                      controller.setPeriod(period);
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isSelected ? AppTheme.primary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: AppTheme.primary.withValues(alpha: 0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Text(
+                      period,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: isSelected ? Colors.white : AppTheme.textSecondary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -186,7 +256,7 @@ class AnalyticsScreen extends StatelessWidget {
               PieChartData(
                 sectionsSpace: 4,
                 centerSpaceRadius: 80,
-                sections: controller.expenseByCategory.map((data) {
+                sections: controller.analyticsByCategory.map((data) {
                   return PieChartSectionData(
                     color: _getColorForHex(data['color'] as String),
                     value: (data['percentage'] as int).toDouble(),
@@ -200,11 +270,14 @@ class AnalyticsScreen extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Total Spent', style: Theme.of(context).textTheme.bodySmall),
+              Obx(() => Text(
+                controller.transactionType.value == 'Expense' ? 'Total Spent' : 'Total Income',
+                style: Theme.of(context).textTheme.bodySmall
+              )),
               const SizedBox(height: 4),
               Obx(
                 () => Text(
-                  formatter.format(controller.totalExpense.value),
+                  formatter.format(controller.totalAmount.value),
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
@@ -224,10 +297,10 @@ class AnalyticsScreen extends StatelessWidget {
       () => ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: controller.expenseByCategory.length,
+        itemCount: controller.analyticsByCategory.length,
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
-          final data = controller.expenseByCategory[index];
+          final data = controller.analyticsByCategory[index];
           final color = _getColorForHex(data['color'] as String);
           final percentage = data['percentage'] as int;
 

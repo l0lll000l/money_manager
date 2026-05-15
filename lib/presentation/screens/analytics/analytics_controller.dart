@@ -3,13 +3,20 @@ import '../../../core/services/database_service.dart';
 
 class AnalyticsController extends GetxController {
   final dbService = Get.find<DatabaseService>();
+  final transactionType = 'Expense'.obs;
   final currentPeriod = 'This Month'.obs;
 
-  final periods = ['This Week', 'This Month', 'This Year', 'Select Month'].obs;
+  final periods = [
+    'This Day',
+    'This Week',
+    'This Month',
+    'This Year',
+    'Select Month',
+  ].obs;
   DateTime? customMonthDate;
 
-  final expenseByCategory = <Map<String, dynamic>>[].obs;
-  final totalExpense = 0.0.obs;
+  final analyticsByCategory = <Map<String, dynamic>>[].obs;
+  final totalAmount = 0.0.obs;
 
   final List<String> _colors = [
     '#3B82F6', // Blue
@@ -30,8 +37,8 @@ class AnalyticsController extends GetxController {
 
   void setPeriod(String period) {
     currentPeriod.value = period;
-    if (period != periods[3]) {
-      periods[3] = 'Select Month';
+    if (period != periods[4]) {
+      periods[4] = 'Select Month';
       customMonthDate = null;
     }
     loadData();
@@ -41,7 +48,7 @@ class AnalyticsController extends GetxController {
     customMonthDate = date;
     // We import intl below if not already imported
     final monthStr = _formatMonth(date);
-    periods[3] = monthStr;
+    periods[4] = monthStr;
     currentPeriod.value = monthStr;
     loadData();
   }
@@ -70,9 +77,14 @@ class AnalyticsController extends GetxController {
 
     // Filter transactions by period
     final filteredTransactions = transactions.where((tx) {
-      if (tx.amount >= 0) return false; // Only expenses
+      if (transactionType.value == 'Expense' && tx.amount >= 0) return false;
+      if (transactionType.value == 'Income' && tx.amount < 0) return false;
 
-      if (currentPeriod.value == 'This Week') {
+      if (currentPeriod.value == 'This Day') {
+        return tx.date.year == now.year &&
+            tx.date.month == now.month &&
+            tx.date.day == now.day;
+      } else if (currentPeriod.value == 'This Week') {
         // Last 7 days including today
         final difference = now.difference(tx.date).inDays;
         return difference >= 0 && difference < 7;
@@ -87,7 +99,7 @@ class AnalyticsController extends GetxController {
       return false;
     }).toList();
 
-    // Calculate total expense
+    // Calculate total amount
     double total = 0.0;
     Map<String, double> categorySums = {};
 
@@ -101,11 +113,11 @@ class AnalyticsController extends GetxController {
       }
     }
 
-    totalExpense.value = total;
+    totalAmount.value = total;
 
     // Create the final list
     if (total == 0) {
-      expenseByCategory.clear();
+      analyticsByCategory.clear();
       return;
     }
 
@@ -127,6 +139,6 @@ class AnalyticsController extends GetxController {
       colorIndex++;
     }
 
-    expenseByCategory.assignAll(result);
+    analyticsByCategory.assignAll(result);
   }
 }
