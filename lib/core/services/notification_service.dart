@@ -82,6 +82,11 @@ class NotificationService {
     );
   }
 
+  Future<void> cancelDailyReminders() async {
+    await flutterLocalNotificationsPlugin.cancel(id: 1);
+    await flutterLocalNotificationsPlugin.cancel(id: 2);
+  }
+
   Future<void> _scheduleDailyNotification({
     required int id,
     required String title,

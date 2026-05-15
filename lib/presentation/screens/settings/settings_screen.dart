@@ -30,26 +30,26 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader('Preferences'),
-            const SizedBox(height: 16),
-            _buildSettingsCard(
-              children: [
-                // _buildStaticTile(
-                //   icon: Icons.language,
-                //   title: 'Language',
-                //   value: 'English',
-                // ),
-                // _buildDivider(),
-                _buildSwitchTile(
-                  icon: Icons.dark_mode_outlined,
-                  title: 'Dark Theme',
-                  value: controller.darkThemeEnabled,
-                  onChanged: controller.toggleDarkTheme,
-                ),
-              ],
-            ),
+            // _buildSectionHeader('Preferences'),
+            // const SizedBox(height: 16),
+            // _buildSettingsCard(
+            //   children: [
+            // _buildStaticTile(
+            //   icon: Icons.language,
+            //   title: 'Language',
+            //   value: 'English',
+            // ),
+            // _buildDivider(),
+            // _buildSwitchTile(
+            //   icon: Icons.dark_mode_outlined,
+            //   title: 'Dark Theme',
+            //   value: controller.darkThemeEnabled,
+            //   onChanged: controller.toggleDarkTheme,
+            // ),
+            //   ],
+            // ),
 
-            const SizedBox(height: 32),
+            // const SizedBox(height: 32),
             _buildSectionHeader('Notifications'),
             const SizedBox(height: 16),
             _buildSettingsCard(
@@ -87,30 +87,30 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 32),
-            Center(
-              child: TextButton.icon(
-                onPressed: controller.logout,
-                icon: const Icon(Icons.logout, color: AppTheme.error),
-                label: const Text(
-                  'Log Out',
-                  style: TextStyle(
-                    color: AppTheme.error,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  backgroundColor: AppTheme.error.withValues(alpha: 0.1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
-            ),
+            // Center(
+            //   child: TextButton.icon(
+            //     onPressed: controller.logout,
+            //     icon: const Icon(Icons.logout, color: AppTheme.error),
+            //     label: const Text(
+            //       'Log Out',
+            //       style: TextStyle(
+            //         color: AppTheme.error,
+            //         fontSize: 16,
+            //         fontWeight: FontWeight.w600,
+            //       ),
+            //     ),
+            //     style: TextButton.styleFrom(
+            //       padding: const EdgeInsets.symmetric(
+            //         horizontal: 24,
+            //         vertical: 12,
+            //       ),
+            //       backgroundColor: AppTheme.error.withValues(alpha: 0.1),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(16),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 40),
           ],
         ),

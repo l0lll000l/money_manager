@@ -15,7 +15,11 @@ void main() async {
   final notificationService = NotificationService();
   await notificationService.init();
   await notificationService.requestPermissions();
-  await notificationService.scheduleDailyReminders();
+
+  final notificationsEnabled = GetStorage().read('notificationsEnabled') ?? true;
+  if (notificationsEnabled) {
+    await notificationService.scheduleDailyReminders();
+  }
 
   runApp(const MyApp());
 }
