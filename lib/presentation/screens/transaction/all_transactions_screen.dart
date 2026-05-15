@@ -15,7 +15,7 @@ class AllTransactionsScreen extends GetView<AllTransactionsController> {
       appBar: AppBar(
         backgroundColor: AppTheme.background,
         elevation: 0,
-        title: Text('All Transactions', style: Theme.of(context).textTheme.headlineMedium),
+        title: Obx(() => Text(controller.pageTitle.value, style: Theme.of(context).textTheme.headlineMedium)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
           onPressed: () => Get.back(),

@@ -11,8 +11,10 @@ class AnalyticsController extends GetxController {
     'This Week',
     'This Month',
     'This Year',
+    'Select Day',
     'Select Month',
   ].obs;
+  DateTime? customDayDate;
   DateTime? customMonthDate;
 
   final analyticsByCategory = <Map<String, dynamic>>[].obs;
@@ -38,7 +40,11 @@ class AnalyticsController extends GetxController {
   void setPeriod(String period) {
     currentPeriod.value = period;
     if (period != periods[4]) {
-      periods[4] = 'Select Month';
+      periods[4] = 'Select Day';
+      customDayDate = null;
+    }
+    if (period != periods[5]) {
+      periods[5] = 'Select Month';
       customMonthDate = null;
     }
     loadData();
@@ -48,9 +54,30 @@ class AnalyticsController extends GetxController {
     customMonthDate = date;
     // We import intl below if not already imported
     final monthStr = _formatMonth(date);
-    periods[4] = monthStr;
+    periods[5] = monthStr;
     currentPeriod.value = monthStr;
+    
+    periods[4] = 'Select Day';
+    customDayDate = null;
     loadData();
+  }
+
+  void setCustomDay(DateTime date) {
+    customDayDate = date;
+    final dayStr = _formatDay(date);
+    periods[4] = dayStr;
+    currentPeriod.value = dayStr;
+    
+    periods[5] = 'Select Month';
+    customMonthDate = null;
+    loadData();
+  }
+
+  String _formatDay(DateTime date) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
   String _formatMonth(DateTime date) {
@@ -92,6 +119,10 @@ class AnalyticsController extends GetxController {
         return tx.date.year == now.year && tx.date.month == now.month;
       } else if (currentPeriod.value == 'This Year') {
         return tx.date.year == now.year;
+      } else if (customDayDate != null) {
+        return tx.date.year == customDayDate!.year &&
+            tx.date.month == customDayDate!.month &&
+            tx.date.day == customDayDate!.day;
       } else if (customMonthDate != null) {
         return tx.date.year == customMonthDate!.year &&
             tx.date.month == customMonthDate!.month;
@@ -135,6 +166,7 @@ class AnalyticsController extends GetxController {
         'amount': entry.value,
         'color': _colors[colorIndex % _colors.length],
         'percentage': percentage,
+        'transactions': filteredTransactions.where((tx) => tx.category == entry.key).toList(),
       });
       colorIndex++;
     }

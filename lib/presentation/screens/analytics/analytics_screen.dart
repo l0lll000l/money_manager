@@ -28,12 +28,14 @@ class AnalyticsScreen extends StatelessWidget {
               const SizedBox(height: 32),
               _buildChartSection(controller, context, formatter),
               const SizedBox(height: 32),
-              Obx(() => Text(
-                controller.transactionType.value == 'Expense'
-                    ? 'Spending Breakdown'
-                    : 'Income Breakdown',
-                style: Theme.of(context).textTheme.headlineMedium,
-              )),
+              Obx(
+                () => Text(
+                  controller.transactionType.value == 'Expense'
+                      ? 'Spending Breakdown'
+                      : 'Income Breakdown',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ),
               const SizedBox(height: 16),
               _buildCategoryList(controller, context, formatter),
             ],
@@ -76,10 +78,11 @@ class AnalyticsScreen extends StatelessWidget {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: (isExpense
-                                      ? AppTheme.error
-                                      : AppTheme.success)
-                                  .withValues(alpha: 0.3),
+                              color:
+                                  (isExpense
+                                          ? AppTheme.error
+                                          : AppTheme.success)
+                                      .withValues(alpha: 0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -89,12 +92,11 @@ class AnalyticsScreen extends StatelessWidget {
                   child: Text(
                     type,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isSelected
-                              ? Colors.white
-                              : AppTheme.textSecondary,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
-                        ),
+                      color: isSelected ? Colors.white : AppTheme.textSecondary,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
                   ),
                 ),
               ),
@@ -126,6 +128,8 @@ class AnalyticsScreen extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     if (period == controller.periods[4]) {
+                      _showDayPicker(context, controller);
+                    } else if (period == controller.periods[5]) {
                       _showMonthPicker(context, controller);
                     } else {
                       controller.setPeriod(period);
@@ -133,7 +137,10 @@ class AnalyticsScreen extends StatelessWidget {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: isSelected ? AppTheme.primary : Colors.transparent,
@@ -151,7 +158,9 @@ class AnalyticsScreen extends StatelessWidget {
                     child: Text(
                       period,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isSelected ? Colors.white : AppTheme.textSecondary,
+                        color: isSelected
+                            ? Colors.white
+                            : AppTheme.textSecondary,
                         fontWeight: isSelected
                             ? FontWeight.w600
                             : FontWeight.normal,
@@ -165,6 +174,41 @@ class AnalyticsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _showDayPicker(
+    BuildContext context,
+    AnalyticsController controller,
+  ) async {
+    final DateTime? selected = await showDatePicker(
+      context: context,
+      initialDate: controller.customDayDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppTheme.primary,
+              onPrimary: Colors.white,
+              surface: AppTheme.surfaceLight,
+              onSurface: Colors.white,
+            ),
+            dialogTheme: DialogThemeData(backgroundColor: AppTheme.surface),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selected != null) {
+      controller.setCustomDay(selected);
+    } else {
+      if (controller.customDayDate == null &&
+          controller.currentPeriod.value == 'Select Day') {
+        controller.setPeriod('This Day');
+      }
+    }
   }
 
   Future<void> _showMonthPicker(
@@ -270,10 +314,14 @@ class AnalyticsScreen extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Obx(() => Text(
-                controller.transactionType.value == 'Expense' ? 'Total Spent' : 'Total Income',
-                style: Theme.of(context).textTheme.bodySmall
-              )),
+              Obx(
+                () => Text(
+                  controller.transactionType.value == 'Expense'
+                      ? 'Total Spent'
+                      : 'Total Income',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
               const SizedBox(height: 4),
               Obx(
                 () => Text(
@@ -304,55 +352,66 @@ class AnalyticsScreen extends StatelessWidget {
           final color = _getColorForHex(data['color'] as String);
           final percentage = data['percentage'] as int;
 
-          return Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppTheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.divider),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
+          return GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                '/all_transactions',
+                arguments: {
+                  'title': '${data['category']}',
+                  'transactions': data['transactions'],
+                },
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.divider),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            data['category'] as String,
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          Text(
-                            formatter.format(data['amount'] as double),
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: percentage / 100,
-                          backgroundColor: AppTheme.surfaceLight,
-                          valueColor: AlwaysStoppedAnimation<Color>(color),
-                          minHeight: 6,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              data['category'] as String,
+                              style: Theme.of(context).textTheme.labelLarge,
+                            ),
+                            Text(
+                              formatter.format(data['amount'] as double),
+                              style: Theme.of(context).textTheme.labelLarge,
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: percentage / 100,
+                            backgroundColor: AppTheme.surfaceLight,
+                            valueColor: AlwaysStoppedAnimation<Color>(color),
+                            minHeight: 6,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
