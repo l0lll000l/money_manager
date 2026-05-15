@@ -122,9 +122,28 @@ class DashboardScreen extends StatelessWidget {
               color: AppTheme.surfaceLight,
               border: Border.all(color: AppTheme.divider),
             ),
-            child: IconButton(
-              icon: const Icon(LucideIcons.bell, size: 20),
-              onPressed: () {},
+            child: Obx(
+              () => Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(LucideIcons.bell, size: 20),
+                    onPressed: () => Get.toNamed('/notifications'),
+                  ),
+                  if (controller.hasUnreadNotifications.value)
+                    Positioned(
+                      right: 12,
+                      top: 12,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: AppTheme.error,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ],

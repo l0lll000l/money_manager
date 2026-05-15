@@ -8,4 +8,5 @@ abstract class AppRoutes {
   static const transactionDetails = '/transaction_details';
   static const profile = '/profile';
   static const allTransactions = '/all_transactions';
+  static const notifications = '/notifications';
 }

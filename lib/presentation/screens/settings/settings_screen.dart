@@ -34,12 +34,12 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildSettingsCard(
               children: [
-                _buildStaticTile(
-                  icon: Icons.language,
-                  title: 'Language',
-                  value: 'English',
-                ),
-                _buildDivider(),
+                // _buildStaticTile(
+                //   icon: Icons.language,
+                //   title: 'Language',
+                //   value: 'English',
+                // ),
+                // _buildDivider(),
                 _buildSwitchTile(
                   icon: Icons.dark_mode_outlined,
                   title: 'Dark Theme',
