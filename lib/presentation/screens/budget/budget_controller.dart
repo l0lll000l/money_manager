@@ -15,6 +15,7 @@ class BudgetController extends GetxController {
     'Health': {'icon': 'activity', 'color': '#3B82F6'},
     'Work': {'icon': 'briefcase', 'color': '#F59E0B'},
     'Electronics': {'icon': 'laptop', 'color': '#F97316'},
+    'Savings Goal': {'icon': 'target', 'color': '#10B981'},
     'Other': {'icon': 'moreHorizontal', 'color': '#8B5CF6'},
   };
 
@@ -26,7 +27,7 @@ class BudgetController extends GetxController {
 
   Future<void> loadData() async {
     // 1. Load Savings Goal
-    savingsGoal.value = dbService.getSavingsGoal();
+    final goal = dbService.getSavingsGoal();
 
     // 2. Load Budgets
     final budgetLimits = dbService.getBudgetLimits();
@@ -34,21 +35,30 @@ class BudgetController extends GetxController {
 
     final now = DateTime.now();
 
-    // Group this month's expenses
+    double savedFromTx = 0.0;
+
+    // Group this month's expenses and calculate total savings
     Map<String, double> spentByCategory = {};
     for (var tx in transactions) {
-      if (tx.amount < 0 &&
-          tx.date.year == now.year &&
-          tx.date.month == now.month) {
-        spentByCategory[tx.category] =
-            (spentByCategory[tx.category] ?? 0) + tx.amount.abs();
+      if (tx.amount < 0) {
+        if (tx.category == 'Savings Goal') {
+          savedFromTx += tx.amount.abs();
+        } else if (tx.date.year == now.year && tx.date.month == now.month) {
+          spentByCategory[tx.category] =
+              (spentByCategory[tx.category] ?? 0) + tx.amount.abs();
+        }
       }
     }
+
+    // Update the saved value
+    goal['saved'] = savedFromTx;
+    savingsGoal.value = goal;
 
     final List<Map<String, dynamic>> loadedBudgets = [];
 
     // Ensure all defined limits are shown
     budgetLimits.forEach((category, limit) {
+      if (category == 'Savings Goal') return;
       final spent = spentByCategory[category] ?? 0.0;
       final meta =
           categoryMeta[category] ??

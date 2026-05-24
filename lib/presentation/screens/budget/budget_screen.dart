@@ -186,9 +186,6 @@ class BudgetScreen extends StatelessWidget {
     final targetController = TextEditingController(
       text: (goal['target'] ?? 0).toString(),
     );
-    final savedController = TextEditingController(
-      text: (goal['saved'] ?? 0).toString(),
-    );
 
     showModalBottomSheet(
       context: context,
@@ -228,15 +225,6 @@ class BudgetScreen extends StatelessWidget {
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(labelText: 'Target Amount'),
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: savedController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Currently Saved'),
-              ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -244,7 +232,7 @@ class BudgetScreen extends StatelessWidget {
                   onPressed: () {
                     final target =
                         double.tryParse(targetController.text) ?? 0.0;
-                    final saved = double.tryParse(savedController.text) ?? 0.0;
+                    final saved = goal['saved'] ?? 0.0;
                     controller.updateSavingsGoal(
                       titleController.text,
                       target,

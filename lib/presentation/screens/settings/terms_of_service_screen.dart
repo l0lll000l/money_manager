@@ -35,23 +35,28 @@ class TermsOfServiceScreen extends StatelessWidget {
           children: [
             _buildSection(
               title: '1. Acceptance of Terms',
-              content: 'By downloading, installing, or using the Aura Money Manager application, you agree to be bound by these Terms of Service. If you do not agree, please do not use the application.',
+              content:
+                  'By downloading, installing, or using the Aura application, you agree to be bound by these Terms of Service. If you do not agree, please do not use the application.',
             ),
             _buildSection(
               title: '2. Use of Service',
-              content: 'Aura Money Manager is designed to help you track your personal finances. You agree to use the app responsibly and not for any unlawful or prohibited activities.',
+              content:
+                  'AuraMoney is designed to help you track your personal finances. You agree to use the app responsibly and not for any unlawful or prohibited activities.',
             ),
             _buildSection(
               title: '3. Intellectual Property',
-              content: 'All intellectual property rights in the application, including design, text, graphics, and underlying code, are owned by us. You may not copy, modify, or distribute any part of it without permission.',
+              content:
+                  'All intellectual property rights in the application, including design, text, graphics, and underlying code, are owned by us. You may not copy, modify, or distribute any part of it without permission.',
             ),
             _buildSection(
               title: '4. Limitation of Liability',
-              content: 'We are not liable for any financial decisions you make based on the analytics provided by this application. The app is a tool for personal tracking, not professional financial advice.',
+              content:
+                  'We are not liable for any financial decisions you make based on the analytics provided by this application. The app is a tool for personal tracking, not professional financial advice.',
             ),
             _buildSection(
               title: '5. Termination',
-              content: 'We reserve the right to terminate or suspend your access to the application at any time without prior notice if you violate these terms.',
+              content:
+                  'We reserve the right to terminate or suspend your access to the application at any time without prior notice if you violate these terms.',
             ),
             const SizedBox(height: 40),
             Center(

@@ -37,6 +37,7 @@ class AddTransactionController extends GetxController {
     {'name': 'Shopping', 'icon': 'shoppingBag'},
     {'name': 'Entertainment', 'icon': 'film'},
     {'name': 'Health', 'icon': 'activity'},
+    {'name': 'Savings Goal', 'icon': 'target'},
     {'name': 'Other', 'icon': 'moreHorizontal'},
   ];
 
