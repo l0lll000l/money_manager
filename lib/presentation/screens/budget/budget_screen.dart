@@ -202,49 +202,51 @@ class BudgetScreen extends StatelessWidget {
             right: 24,
             top: 24,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Edit Savings Goal',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 24),
-              TextField(
-                controller: titleController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Goal Title'),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: targetController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+          child: Obx(
+            () => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Edit Savings Goal',
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Target Amount'),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final target =
-                        double.tryParse(targetController.text) ?? 0.0;
-                    final saved = goal['saved'] ?? 0.0;
-                    controller.updateSavingsGoal(
-                      titleController.text,
-                      target,
-                      saved,
-                    );
-                    Get.back();
-                  },
-                  child: const Text('Save Goal'),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: titleController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Goal Title'),
                 ),
-              ),
-              const SizedBox(height: 24),
-            ],
+                const SizedBox(height: 16),
+                TextField(
+                  controller: targetController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Target Amount'),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final target =
+                          double.tryParse(targetController.text) ?? 0.0;
+                      final saved = goal['saved'] ?? 0.0;
+                      controller.updateSavingsGoal(
+                        titleController.text,
+                        target,
+                        saved,
+                      );
+                      Get.back();
+                    },
+                    child: const Text('Save Goal'),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         );
       },

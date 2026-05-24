@@ -22,6 +22,10 @@ class DashboardController extends GetxController {
   final userName = 'User'.obs;
   final hasUnreadNotifications = false.obs;
 
+  // Contribution Calendar State
+  final RxList<List<Map<String, dynamic>>> contributionWeeks = <List<Map<String, dynamic>>>[].obs;
+  final selectedContribution = Rxn<Map<String, dynamic>>();
+
   @override
   void onInit() {
     super.onInit();
@@ -125,6 +129,40 @@ class DashboardController extends GetxController {
           )
           .toList(),
     );
+
+    // Calculate GitHub Contribution Calendar Weeks
+    final today = DateTime(now.year, now.month, now.day);
+    // Find Sunday of the current week (GitHub calendar columns start on Sunday)
+    // today.weekday is 1 (Monday) to 7 (Sunday). So subtract today.weekday % 7 to get Sunday.
+    final currentWeekSunday = today.subtract(Duration(days: today.weekday % 7));
+    // Start date is 19 weeks before this Sunday (so we have exactly 20 columns/weeks in total)
+    final firstDate = currentWeekSunday.subtract(const Duration(days: 19 * 7));
+
+    final Map<String, int> txCounts = {};
+    final Map<String, double> txAmounts = {};
+    
+    for (var tx in transactions) {
+      final txDateOnly = DateTime(tx.date.year, tx.date.month, tx.date.day);
+      final key = txDateOnly.toIso8601String().split('T')[0];
+      txCounts[key] = (txCounts[key] ?? 0) + 1;
+      txAmounts[key] = (txAmounts[key] ?? 0) + tx.amount.abs();
+    }
+
+    final List<List<Map<String, dynamic>>> weeks = [];
+    for (int w = 0; w < 20; w++) {
+      final List<Map<String, dynamic>> weekDays = [];
+      for (int d = 0; d < 7; d++) {
+        final date = firstDate.add(Duration(days: w * 7 + d));
+        final key = date.toIso8601String().split('T')[0];
+        weekDays.add({
+          'date': date,
+          'count': txCounts[key] ?? 0,
+          'totalAmount': txAmounts[key] ?? 0.0,
+        });
+      }
+      weeks.add(weekDays);
+    }
+    contributionWeeks.assignAll(weeks);
   }
 
   String get greeting {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
 import 'dashboard_controller.dart';
 
@@ -26,7 +26,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 32),
               _buildActionButtons(context),
               const SizedBox(height: 32),
-              _buildChartSection(controller, context),
+              _buildContributionCalendar(controller, context),
               const SizedBox(height: 32),
               _buildRecentTransactions(controller, context),
             ],
@@ -291,7 +291,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChartSection(
+  Widget _buildContributionCalendar(
     DashboardController controller,
     BuildContext context,
   ) {
@@ -300,55 +300,310 @@ class DashboardScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Analytics', style: Theme.of(context).textTheme.headlineMedium),
+          Text(
+            'Activity Calendar',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
           const SizedBox(height: 16),
           Container(
-            height: 200,
-            padding: const EdgeInsets.only(top: 24, right: 16, bottom: 10),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppTheme.surface,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: AppTheme.divider),
             ),
-            child: Obx(() {
-              final maxSpending = controller.weeklySpending.isEmpty
-                  ? 500.0
-                  : controller.weeklySpending.reduce((a, b) => a > b ? a : b);
-              // Add 20% padding to the top of the chart
-              final dynamicMaxY = maxSpending > 0 ? maxSpending * 1.2 : 500.0;
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(() {
+                  if (controller.contributionWeeks.isEmpty) {
+                    return const SizedBox(
+                      height: 120,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
 
-              return LineChart(
-                LineChartData(
-                  gridData: const FlGridData(show: false),
-                  titlesData: const FlTitlesData(show: false),
-                  borderData: FlBorderData(show: false),
-                  minX: 0,
-                  maxX: 6,
-                  minY: 0,
-                  maxY: dynamicMaxY,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: controller.weeklySpending
-                          .asMap()
-                          .entries
-                          .map((e) => FlSpot(e.key.toDouble(), e.value))
-                          .toList(),
-                      isCurved: true,
-                      color: AppTheme.primary,
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                      dotData: const FlDotData(show: false),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: AppTheme.primary.withValues(alpha: 0.1),
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Days of the week label column
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16), // Align with month labels
+                          _buildDayOfWeekLabel('Su'),
+                          _buildDayOfWeekLabel('Mo'),
+                          _buildDayOfWeekLabel('Tu'),
+                          _buildDayOfWeekLabel('We'),
+                          _buildDayOfWeekLabel('Th'),
+                          _buildDayOfWeekLabel('Fr'),
+                          _buildDayOfWeekLabel('Sa'),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                      const SizedBox(width: 8),
+                      // Heatmap grid with Month labels scrollable horizontally
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          reverse:
+                              true, // Display the current week (far right) by default
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildMonthLabels(controller),
+                              const SizedBox(height: 6),
+                              _buildGridRows(controller),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                const Divider(height: 32, thickness: 1),
+                // Interactive selected date info
+                Obx(() {
+                  final selected = controller.selectedContribution.value;
+                  if (selected == null) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Tap a cell to view daily activity',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: AppTheme.textSecondary,
+                                fontStyle: FontStyle.italic,
+                              ),
+                        ),
+                        _buildLegend(context),
+                      ],
+                    );
+                  }
+
+                  final date = selected['date'] as DateTime;
+                  final count = selected['count'] as int;
+                  final amount = selected['totalAmount'] as double;
+                  final dateStr = DateFormat('EEEE, MMM d, y').format(date);
+
+                  String activityText = count == 0
+                      ? 'No transactions recorded'
+                      : '$count transaction${count > 1 ? 's' : ''} logged';
+                  if (count > 0) {
+                    activityText +=
+                        ' (${controller.currencyFormatter.format(amount)})';
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              dateStr,
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(
+                                    color: AppTheme.textPrimary,
+                                    fontSize: 12,
+                                  ),
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: count > 0
+                                        ? AppTheme.success
+                                        : AppTheme.textSecondary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  activityText,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: count > 0
+                                            ? AppTheme.success
+                                            : AppTheme.textSecondary,
+                                        fontWeight: count > 0
+                                            ? FontWeight.w600
+                                            : FontWeight.normal,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          LucideIcons.x,
+                          size: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                        onPressed: () {
+                          controller.selectedContribution.value = null;
+                        },
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  );
+                }),
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDayOfWeekLabel(String label) {
+    return Container(
+      height: 10,
+      margin: const EdgeInsets.symmetric(vertical: 1.5),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: AppTheme.textSecondary,
+          fontSize: 8,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMonthLabels(DashboardController controller) {
+    final weeks = controller.contributionWeeks;
+    if (weeks.isEmpty) return const SizedBox(height: 12);
+
+    List<Widget> children = [];
+    for (int index = 0; index < weeks.length; index++) {
+      final firstDayOfWeek = weeks[index][0]['date'] as DateTime;
+      // Display month label every 4 weeks to avoid overlapping text
+      final showLabel = index % 4 == 0;
+      if (showLabel) {
+        children.add(
+          Positioned(
+            left: index * 13.0,
+            top: 0,
+            child: Text(
+              DateFormat('MMM').format(firstDayOfWeek),
+              style: const TextStyle(
+                color: AppTheme.textSecondary,
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
+    return SizedBox(
+      height: 14,
+      width: weeks.length * 13.0,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildGridRows(DashboardController controller) {
+    final weeks = controller.contributionWeeks;
+
+    return Row(
+      children: List.generate(weeks.length, (wIndex) {
+        final week = weeks[wIndex];
+        return Column(
+          children: List.generate(week.length, (dIndex) {
+            final day = week[dIndex];
+            final date = day['date'] as DateTime;
+            final count = day['count'] as int;
+
+            // Determine color based on transaction count
+            Color cellColor;
+            if (count == 0) {
+              cellColor = AppTheme.divider.withValues(alpha: 0.5);
+            } else if (count == 1) {
+              cellColor = AppTheme.success.withValues(alpha: 0.25);
+            } else if (count == 2) {
+              cellColor = AppTheme.success.withValues(alpha: 0.5);
+            } else if (count == 3) {
+              cellColor = AppTheme.success.withValues(alpha: 0.75);
+            } else {
+              cellColor = AppTheme.success;
+            }
+
+            final isSelected =
+                controller.selectedContribution.value != null &&
+                (controller.selectedContribution.value!['date'] as DateTime)
+                        .difference(date)
+                        .inDays ==
+                    0;
+
+            return GestureDetector(
+              onTap: () {
+                controller.selectedContribution.value = day;
+              },
+              child: Container(
+                width: 10,
+                height: 10,
+                margin: const EdgeInsets.all(1.5),
+                decoration: BoxDecoration(
+                  color: cellColor,
+                  borderRadius: BorderRadius.circular(2),
+                  border: isSelected
+                      ? Border.all(color: AppTheme.textPrimary, width: 1.0)
+                      : Border.all(color: Colors.transparent, width: 1.0),
+                ),
+              ),
+            );
+          }),
+        );
+      }),
+    );
+  }
+
+  Widget _buildLegend(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Less',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 9),
+        ),
+        const SizedBox(width: 4),
+        _buildLegendCell(AppTheme.divider.withValues(alpha: 0.5)),
+        _buildLegendCell(AppTheme.success.withValues(alpha: 0.25)),
+        _buildLegendCell(AppTheme.success.withValues(alpha: 0.5)),
+        _buildLegendCell(AppTheme.success.withValues(alpha: 0.75)),
+        _buildLegendCell(AppTheme.success),
+        const SizedBox(width: 4),
+        Text(
+          'More',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 9),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLegendCell(Color color) {
+    return Container(
+      width: 8,
+      height: 8,
+      margin: const EdgeInsets.symmetric(horizontal: 1.0),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(1.5),
       ),
     );
   }
