@@ -52,7 +52,7 @@ class BudgetController extends GetxController {
 
     // Update the saved value
     goal['saved'] = savedFromTx;
-    savingsGoal.value = goal;
+    savingsGoal.value = Map<String, dynamic>.from(goal);
 
     final List<Map<String, dynamic>> loadedBudgets = [];
 
