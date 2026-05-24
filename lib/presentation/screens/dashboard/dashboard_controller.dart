@@ -140,12 +140,27 @@ class DashboardController extends GetxController {
 
     final Map<String, int> txCounts = {};
     final Map<String, double> txAmounts = {};
+    final Map<String, List<Map<String, dynamic>>> txsPerDay = {};
     
     for (var tx in transactions) {
       final txDateOnly = DateTime(tx.date.year, tx.date.month, tx.date.day);
       final key = txDateOnly.toIso8601String().split('T')[0];
       txCounts[key] = (txCounts[key] ?? 0) + 1;
       txAmounts[key] = (txAmounts[key] ?? 0) + tx.amount.abs();
+      
+      final txMap = {
+        'id': tx.id,
+        'title': tx.title,
+        'category': tx.category,
+        'amount': tx.amount,
+        'date': tx.date,
+        'icon': tx.icon,
+      };
+      if (txsPerDay[key] == null) {
+        txsPerDay[key] = [txMap];
+      } else {
+        txsPerDay[key]!.add(txMap);
+      }
     }
 
     final List<List<Map<String, dynamic>>> weeks = [];
@@ -158,6 +173,7 @@ class DashboardController extends GetxController {
           'date': date,
           'count': txCounts[key] ?? 0,
           'totalAmount': txAmounts[key] ?? 0.0,
+          'transactions': txsPerDay[key] ?? [],
         });
       }
       weeks.add(weekDays);

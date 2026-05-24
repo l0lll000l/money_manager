@@ -17,14 +17,16 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
           icon: const Icon(LucideIcons.x),
           onPressed: () => Get.back(),
         ),
-        title: Obx(() => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildTypeToggle(context, 'Expense', !controller.isIncome.value),
-            const SizedBox(width: 16),
-            _buildTypeToggle(context, 'Income', controller.isIncome.value),
-          ],
-        )),
+        title: Obx(
+          () => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTypeToggle(context, 'Expense', !controller.isIncome.value),
+              const SizedBox(width: 16),
+              _buildTypeToggle(context, 'Income', controller.isIncome.value),
+            ],
+          ),
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -74,7 +76,9 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
 
   Widget _buildAmountDisplay(BuildContext context) {
     return Obx(() {
-      final color = controller.isIncome.value ? AppTheme.success : AppTheme.error;
+      final color = controller.isIncome.value
+          ? AppTheme.success
+          : AppTheme.error;
       return Column(
         children: [
           Text('How much?', style: Theme.of(context).textTheme.bodyMedium),
@@ -84,14 +88,18 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text('\$', style: Theme.of(context).textTheme.displaySmall?.copyWith(color: color)),
+              Text(
+                '\$',
+                style: Theme.of(
+                  context,
+                ).textTheme.displaySmall?.copyWith(color: color),
+              ),
               const SizedBox(width: 4),
               Text(
                 controller.amount.value,
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  fontSize: 56,
-                  color: color,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.displayLarge?.copyWith(fontSize: 56, color: color),
               ),
             ],
           ),
@@ -102,16 +110,28 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
 
   IconData _getIconForName(String iconName) {
     switch (iconName) {
-      case 'utensils': return LucideIcons.utensils;
-      case 'car': return LucideIcons.car;
-      case 'shoppingBag': return LucideIcons.shoppingBag;
-      case 'film': return LucideIcons.film;
-      case 'activity': return LucideIcons.activity;
-      case 'briefcase': return LucideIcons.briefcase;
-      case 'laptop': return LucideIcons.laptop;
-      case 'gift': return LucideIcons.gift;
-      case 'trendingUp': return LucideIcons.trendingUp;
-      default: return LucideIcons.moreHorizontal;
+      case 'utensils':
+        return LucideIcons.utensils;
+      case 'car':
+        return LucideIcons.car;
+      case 'shoppingBag':
+        return LucideIcons.shoppingBag;
+      case 'film':
+        return LucideIcons.film;
+      case 'activity':
+        return LucideIcons.activity;
+      case 'briefcase':
+        return LucideIcons.briefcase;
+      case 'laptop':
+        return LucideIcons.laptop;
+      case 'gift':
+        return LucideIcons.gift;
+      case 'music':
+        return LucideIcons.music;
+      case 'target':
+        return LucideIcons.target;
+      default:
+        return LucideIcons.moreHorizontal;
     }
   }
 
@@ -121,45 +141,57 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
       children: [
         Text('Category', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 16),
-        Obx(() => Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: controller.currentCategories.map((cat) {
-            final isSelected = controller.selectedCategory.value == cat['name'];
-            return GestureDetector(
-              onTap: () => controller.selectedCategory.value = cat['name']!,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppTheme.primary : AppTheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isSelected ? AppTheme.primary : AppTheme.divider,
+        Obx(
+          () => Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: controller.currentCategories.map((cat) {
+              final isSelected =
+                  controller.selectedCategory.value == cat['name'];
+              return GestureDetector(
+                onTap: () => controller.selectedCategory.value = cat['name']!,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppTheme.primary : AppTheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected ? AppTheme.primary : AppTheme.divider,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _getIconForName(cat['icon']!),
+                        size: 16,
+                        color: isSelected
+                            ? Colors.white
+                            : AppTheme.textSecondary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        cat['name']!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: isSelected
+                              ? Colors.white
+                              : AppTheme.textPrimary,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      _getIconForName(cat['icon']!),
-                      size: 16,
-                      color: isSelected ? Colors.white : AppTheme.textSecondary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      cat['name']!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isSelected ? Colors.white : AppTheme.textPrimary,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        )),
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }
@@ -176,26 +208,38 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
         ),
         child: Row(
           children: [
-            const Icon(LucideIcons.calendar, color: AppTheme.textSecondary, size: 20),
+            const Icon(
+              LucideIcons.calendar,
+              color: AppTheme.textSecondary,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Obx(() {
               final date = controller.selectedDate.value;
               final now = DateTime.now();
               String dateText = DateFormat('MMM d, yyyy').format(date);
-              if (date.year == now.year && date.month == now.month && date.day == now.day) {
+              if (date.year == now.year &&
+                  date.month == now.month &&
+                  date.day == now.day) {
                 dateText = 'Today';
-              } else if (date.year == now.year && date.month == now.month && date.day == now.day - 1) {
+              } else if (date.year == now.year &&
+                  date.month == now.month &&
+                  date.day == now.day - 1) {
                 dateText = 'Yesterday';
               }
               return Text(
                 dateText,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.textPrimary,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppTheme.textPrimary),
               );
             }),
             const Spacer(),
-            const Icon(Icons.arrow_forward_ios, color: AppTheme.textSecondary, size: 16),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: AppTheme.textSecondary,
+              size: 16,
+            ),
           ],
         ),
       ),
@@ -256,7 +300,11 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
             children: [
               _buildKeypadButton(context, '.'),
               _buildKeypadButton(context, '0'),
-              _buildKeypadIconButton(context, LucideIcons.delete, controller.removeAmount),
+              _buildKeypadIconButton(
+                context,
+                LucideIcons.delete,
+                controller.removeAmount,
+              ),
             ],
           ),
           const SizedBox(height: 24),
@@ -266,11 +314,16 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
               onPressed: controller.saveTransaction,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
-              child: const Text('Save Transaction', style: TextStyle(fontSize: 18)),
+              child: const Text(
+                'Save Transaction',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -286,14 +339,20 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
           alignment: Alignment.center,
           child: Text(
             text,
-            style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w500),
+            style: Theme.of(
+              context,
+            ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w500),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildKeypadIconButton(BuildContext context, IconData icon, VoidCallback onTap) {
+  Widget _buildKeypadIconButton(
+    BuildContext context,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
     return Expanded(
       child: InkWell(
         onTap: onTap,

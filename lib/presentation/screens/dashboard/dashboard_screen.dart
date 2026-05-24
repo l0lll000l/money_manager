@@ -24,8 +24,8 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 24),
               _buildBalanceCard(controller, context),
               const SizedBox(height: 32),
-              _buildActionButtons(context),
-              const SizedBox(height: 32),
+              // _buildActionButtons(context),
+              // const SizedBox(height: 32),
               _buildContributionCalendar(controller, context),
               const SizedBox(height: 32),
               _buildRecentTransactions(controller, context),
@@ -259,19 +259,19 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildActionItem(context, LucideIcons.send, 'Transfer'),
-          _buildActionItem(context, LucideIcons.wallet, 'Top up'),
-          _buildActionItem(context, LucideIcons.layoutGrid, 'More'),
-        ],
-      ),
-    );
-  }
+  // Widget _buildActionButtons(BuildContext context) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 24),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       children: [
+  //         _buildActionItem(context, LucideIcons.send, 'Transfer'),
+  //         _buildActionItem(context, LucideIcons.wallet, 'Top up'),
+  //         _buildActionItem(context, LucideIcons.layoutGrid, 'More'),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildActionItem(BuildContext context, IconData icon, String label) {
     return Column(
@@ -386,6 +386,8 @@ class DashboardScreen extends StatelessWidget {
                   final count = selected['count'] as int;
                   final amount = selected['totalAmount'] as double;
                   final dateStr = DateFormat('EEEE, MMM d, y').format(date);
+                  final dayTxs =
+                      selected['transactions'] as List<dynamic>? ?? [];
 
                   String activityText = count == 0
                       ? 'No transactions recorded'
@@ -395,64 +397,129 @@ class DashboardScreen extends StatelessWidget {
                         ' (${controller.currencyFormatter.format(amount)})';
                   }
 
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              dateStr,
-                              style: Theme.of(context).textTheme.labelLarge
-                                  ?.copyWith(
-                                    color: AppTheme.textPrimary,
-                                    fontSize: 12,
-                                  ),
-                            ),
-                            const SizedBox(height: 2),
-                            Row(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    color: count > 0
-                                        ? AppTheme.success
-                                        : AppTheme.textSecondary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
                                 Text(
-                                  activityText,
-                                  style: Theme.of(context).textTheme.bodySmall
+                                  dateStr,
+                                  style: Theme.of(context).textTheme.labelLarge
                                       ?.copyWith(
+                                        color: AppTheme.textPrimary,
+                                        fontSize: 12,
+                                      ),
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: BoxDecoration(
                                         color: count > 0
                                             ? AppTheme.success
                                             : AppTheme.textSecondary,
-                                        fontWeight: count > 0
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
+                                        shape: BoxShape.circle,
                                       ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      activityText,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: count > 0
+                                                ? AppTheme.success
+                                                : AppTheme.textSecondary,
+                                            fontWeight: count > 0
+                                                ? FontWeight.w600
+                                                : FontWeight.normal,
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              LucideIcons.x,
+                              size: 14,
+                              color: AppTheme.textSecondary,
+                            ),
+                            onPressed: () {
+                              controller.selectedContribution.value = null;
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(
-                          LucideIcons.x,
-                          size: 14,
-                          color: AppTheme.textSecondary,
+                      if (dayTxs.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: dayTxs.length,
+                          separatorBuilder: (context, index) =>
+                              const Divider(height: 16),
+                          itemBuilder: (context, index) {
+                            final tx = dayTxs[index];
+                            final txAmount = tx['amount'] as double;
+                            final isIncome = txAmount > 0;
+
+                            return ListTile(
+                              onTap: () => Get.toNamed(
+                                '/transaction_details',
+                                arguments: tx,
+                              ),
+                              contentPadding: EdgeInsets.zero,
+                              dense: true,
+                              leading: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.surfaceLight,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  _getTxIcon(tx['icon'] as String?),
+                                  color: AppTheme.textPrimary,
+                                  size: 16,
+                                ),
+                              ),
+                              title: Text(
+                                tx['category'] as String,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.labelLarge?.copyWith(fontSize: 13),
+                              ),
+                              subtitle: Text(
+                                tx['title'] as String,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.copyWith(fontSize: 11),
+                              ),
+                              trailing: Text(
+                                '${isIncome ? '+' : ''}${controller.currencyFormatter.format(txAmount)}',
+                                style: Theme.of(context).textTheme.labelLarge
+                                    ?.copyWith(
+                                      color: isIncome
+                                          ? AppTheme.success
+                                          : AppTheme.error,
+                                      fontSize: 13,
+                                    ),
+                              ),
+                            );
+                          },
                         ),
-                        onPressed: () {
-                          controller.selectedContribution.value = null;
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
+                      ],
                     ],
                   );
                 }),
@@ -510,10 +577,7 @@ class DashboardScreen extends StatelessWidget {
     return SizedBox(
       height: 14,
       width: weeks.length * 13.0,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: children,
-      ),
+      child: Stack(clipBehavior: Clip.none, children: children),
     );
   }
 
@@ -608,6 +672,33 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
+  IconData _getTxIcon(String? icon) {
+    switch (icon) {
+      case 'utensils':
+        return LucideIcons.utensils;
+      case 'car':
+        return LucideIcons.car;
+      case 'shoppingBag':
+        return LucideIcons.shoppingBag;
+      case 'film':
+        return LucideIcons.film;
+      case 'activity':
+        return LucideIcons.activity;
+      case 'briefcase':
+        return LucideIcons.briefcase;
+      case 'laptop':
+        return LucideIcons.laptop;
+      case 'gift':
+        return LucideIcons.gift;
+      case 'music':
+        return LucideIcons.music;
+      case 'target':
+        return LucideIcons.target;
+      default:
+        return LucideIcons.circleDollarSign;
+    }
+  }
+
   Widget _buildRecentTransactions(
     DashboardController controller,
     BuildContext context,
@@ -641,38 +732,7 @@ class DashboardScreen extends StatelessWidget {
                 final tx = controller.recentTransactions[index];
                 final amount = tx['amount'] as double;
                 final isIncome = amount > 0;
-
-                IconData iconData = LucideIcons.circleDollarSign;
-                if (tx['icon'] == 'music') {
-                  iconData = LucideIcons.music;
-                }
-                if (tx['icon'] == 'shoppingBag') {
-                  iconData = LucideIcons.shoppingBag;
-                }
-                if (tx['icon'] == 'briefcase') {
-                  iconData = LucideIcons.briefcase;
-                }
-                if (tx['icon'] == 'car') {
-                  iconData = LucideIcons.car;
-                }
-                if (tx['icon'] == 'utensils') {
-                  iconData = LucideIcons.utensils;
-                }
-                if (tx['icon'] == 'film') {
-                  iconData = LucideIcons.film;
-                }
-                if (tx['icon'] == 'activity') {
-                  iconData = LucideIcons.activity;
-                }
-                if (tx['icon'] == 'moreHorizontal') {
-                  iconData = LucideIcons.moreHorizontal;
-                }
-                if (tx['icon'] == 'laptop') {
-                  iconData = LucideIcons.laptop;
-                }
-                if (tx['icon'] == 'gift') {
-                  iconData = LucideIcons.gift;
-                }
+                final iconData = _getTxIcon(tx['icon'] as String?);
 
                 return ListTile(
                   onTap: () =>

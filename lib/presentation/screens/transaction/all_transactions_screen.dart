@@ -97,6 +97,8 @@ class AllTransactionsScreen extends GetView<AllTransactionsController> {
         return LucideIcons.trendingUp;
       case 'music':
         return LucideIcons.music;
+      case 'target':
+        return LucideIcons.target;
       default:
         return LucideIcons.moreHorizontal;
     }
