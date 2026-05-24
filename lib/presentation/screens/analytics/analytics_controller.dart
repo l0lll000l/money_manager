@@ -11,10 +11,8 @@ class AnalyticsController extends GetxController {
     'This Day',
     'This Week',
     'This Month',
-    'Select Month',
     'Custom Range',
   ].obs;
-  DateTime? customMonthDate;
   DateTimeRange? customDateRange;
 
   final analyticsByCategory = <Map<String, dynamic>>[].obs;
@@ -40,54 +38,18 @@ class AnalyticsController extends GetxController {
   void setPeriod(String period) {
     currentPeriod.value = period;
     if (period != periods[3]) {
-      periods[3] = 'Select Month';
-      customMonthDate = null;
-    }
-    if (period != periods[4]) {
-      periods[4] = 'Custom Range';
+      periods[3] = 'Custom Range';
       customDateRange = null;
     }
-    loadData();
-  }
-
-  void setCustomMonth(DateTime date) {
-    customMonthDate = date;
-    final monthStr = _formatMonth(date);
-    periods[3] = monthStr;
-    currentPeriod.value = monthStr;
-    
-    periods[4] = 'Custom Range';
-    customDateRange = null;
     loadData();
   }
 
   void setCustomDateRange(DateTimeRange range) {
     customDateRange = range;
     final rangeStr = _formatDateRange(range);
-    periods[4] = rangeStr;
+    periods[3] = rangeStr;
     currentPeriod.value = rangeStr;
-    
-    periods[3] = 'Select Month';
-    customMonthDate = null;
     loadData();
-  }
-
-  String _formatMonth(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.year}';
   }
 
   String _formatDateRange(DateTimeRange range) {
@@ -118,9 +80,6 @@ class AnalyticsController extends GetxController {
         return difference >= 0 && difference < 7;
       } else if (currentPeriod.value == 'This Month') {
         return tx.date.year == now.year && tx.date.month == now.month;
-      } else if (customMonthDate != null) {
-        return tx.date.year == customMonthDate!.year &&
-            tx.date.month == customMonthDate!.month;
       } else if (customDateRange != null) {
         final txDate = DateTime(tx.date.year, tx.date.month, tx.date.day);
         final startDate = DateTime(customDateRange!.start.year, customDateRange!.start.month, customDateRange!.start.day);

@@ -128,8 +128,6 @@ class AnalyticsScreen extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     if (period == controller.periods[3]) {
-                      _showMonthPicker(context, controller);
-                    } else if (period == controller.periods[4]) {
                       _showDateRangePicker(context, controller);
                     } else {
                       controller.setPeriod(period);
@@ -213,69 +211,6 @@ class AnalyticsScreen extends StatelessWidget {
     } else {
       if (controller.customDateRange == null &&
           controller.currentPeriod.value == 'Custom Range') {
-        controller.setPeriod('This Month');
-      }
-    }
-  }
-
-  Future<void> _showMonthPicker(
-    BuildContext context,
-    AnalyticsController controller,
-  ) async {
-    final now = DateTime.now();
-    final List<DateTime> months = [];
-    // Generate last 24 months
-    for (int i = 0; i < 24; i++) {
-      months.add(DateTime(now.year, now.month - i, 1));
-    }
-
-    final DateTime? selected = await showModalBottomSheet<DateTime>(
-      context: context,
-      backgroundColor: AppTheme.surfaceLight,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Select Month',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineSmall?.copyWith(color: Colors.white),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: months.length,
-                  itemBuilder: (context, index) {
-                    final month = months[index];
-                    return ListTile(
-                      title: Text(
-                        DateFormat('MMMM yyyy').format(month),
-                        style: const TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      onTap: () => Navigator.pop(context, month),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (selected != null) {
-      controller.setCustomMonth(selected);
-    } else {
-      if (controller.customMonthDate == null &&
-          controller.currentPeriod.value == 'Select Month') {
         controller.setPeriod('This Month');
       }
     }
