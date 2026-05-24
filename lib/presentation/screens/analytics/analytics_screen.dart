@@ -127,10 +127,10 @@ class AnalyticsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: GestureDetector(
                   onTap: () {
-                    if (period == controller.periods[4]) {
-                      _showDayPicker(context, controller);
-                    } else if (period == controller.periods[5]) {
+                    if (period == controller.periods[3]) {
                       _showMonthPicker(context, controller);
+                    } else if (period == controller.periods[4]) {
+                      _showDateRangePicker(context, controller);
                     } else {
                       controller.setPeriod(period);
                     }
@@ -176,13 +176,18 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _showDayPicker(
+  Future<void> _showDateRangePicker(
     BuildContext context,
     AnalyticsController controller,
   ) async {
-    final DateTime? selected = await showDatePicker(
+    final DateTimeRange? selected = await showDateRangePicker(
       context: context,
-      initialDate: controller.customDayDate ?? DateTime.now(),
+      initialDateRange:
+          controller.customDateRange ??
+          DateTimeRange(
+            start: DateTime.now().subtract(const Duration(days: 7)),
+            end: DateTime.now(),
+          ),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
       builder: (context, child) {
@@ -194,7 +199,9 @@ class AnalyticsScreen extends StatelessWidget {
               surface: AppTheme.surfaceLight,
               onSurface: Colors.white,
             ),
-            dialogTheme: DialogThemeData(backgroundColor: AppTheme.surface),
+            dialogTheme: const DialogThemeData(
+              backgroundColor: AppTheme.surface,
+            ),
           ),
           child: child!,
         );
@@ -202,11 +209,11 @@ class AnalyticsScreen extends StatelessWidget {
     );
 
     if (selected != null) {
-      controller.setCustomDay(selected);
+      controller.setCustomDateRange(selected);
     } else {
-      if (controller.customDayDate == null &&
-          controller.currentPeriod.value == 'Select Day') {
-        controller.setPeriod('This Day');
+      if (controller.customDateRange == null &&
+          controller.currentPeriod.value == 'Custom Range') {
+        controller.setPeriod('This Month');
       }
     }
   }

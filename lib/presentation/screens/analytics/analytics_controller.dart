@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/services/database_service.dart';
 
@@ -10,12 +11,11 @@ class AnalyticsController extends GetxController {
     'This Day',
     'This Week',
     'This Month',
-    'This Year',
-    'Select Day',
     'Select Month',
+    'Custom Range',
   ].obs;
-  DateTime? customDayDate;
   DateTime? customMonthDate;
+  DateTimeRange? customDateRange;
 
   final analyticsByCategory = <Map<String, dynamic>>[].obs;
   final totalAmount = 0.0.obs;
@@ -39,45 +39,37 @@ class AnalyticsController extends GetxController {
 
   void setPeriod(String period) {
     currentPeriod.value = period;
-    if (period != periods[4]) {
-      periods[4] = 'Select Day';
-      customDayDate = null;
-    }
-    if (period != periods[5]) {
-      periods[5] = 'Select Month';
+    if (period != periods[3]) {
+      periods[3] = 'Select Month';
       customMonthDate = null;
+    }
+    if (period != periods[4]) {
+      periods[4] = 'Custom Range';
+      customDateRange = null;
     }
     loadData();
   }
 
   void setCustomMonth(DateTime date) {
     customMonthDate = date;
-    // We import intl below if not already imported
     final monthStr = _formatMonth(date);
-    periods[5] = monthStr;
+    periods[3] = monthStr;
     currentPeriod.value = monthStr;
     
-    periods[4] = 'Select Day';
-    customDayDate = null;
+    periods[4] = 'Custom Range';
+    customDateRange = null;
     loadData();
   }
 
-  void setCustomDay(DateTime date) {
-    customDayDate = date;
-    final dayStr = _formatDay(date);
-    periods[4] = dayStr;
-    currentPeriod.value = dayStr;
+  void setCustomDateRange(DateTimeRange range) {
+    customDateRange = range;
+    final rangeStr = _formatDateRange(range);
+    periods[4] = rangeStr;
+    currentPeriod.value = rangeStr;
     
-    periods[5] = 'Select Month';
+    periods[3] = 'Select Month';
     customMonthDate = null;
     loadData();
-  }
-
-  String _formatDay(DateTime date) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
   String _formatMonth(DateTime date) {
@@ -96,6 +88,15 @@ class AnalyticsController extends GetxController {
       'Dec',
     ];
     return '${months[date.month - 1]} ${date.year}';
+  }
+
+  String _formatDateRange(DateTimeRange range) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    final startStr = '${range.start.day} ${months[range.start.month - 1]}';
+    final endStr = '${range.end.day} ${months[range.end.month - 1]}';
+    return '$startStr - $endStr';
   }
 
   Future<void> loadData() async {
@@ -117,15 +118,15 @@ class AnalyticsController extends GetxController {
         return difference >= 0 && difference < 7;
       } else if (currentPeriod.value == 'This Month') {
         return tx.date.year == now.year && tx.date.month == now.month;
-      } else if (currentPeriod.value == 'This Year') {
-        return tx.date.year == now.year;
-      } else if (customDayDate != null) {
-        return tx.date.year == customDayDate!.year &&
-            tx.date.month == customDayDate!.month &&
-            tx.date.day == customDayDate!.day;
       } else if (customMonthDate != null) {
         return tx.date.year == customMonthDate!.year &&
             tx.date.month == customMonthDate!.month;
+      } else if (customDateRange != null) {
+        final txDate = DateTime(tx.date.year, tx.date.month, tx.date.day);
+        final startDate = DateTime(customDateRange!.start.year, customDateRange!.start.month, customDateRange!.start.day);
+        final endDate = DateTime(customDateRange!.end.year, customDateRange!.end.month, customDateRange!.end.day);
+        return (txDate.isAfter(startDate) || txDate.isAtSameMomentAs(startDate)) &&
+            (txDate.isBefore(endDate) || txDate.isAtSameMomentAs(endDate));
       }
       return false;
     }).toList();
