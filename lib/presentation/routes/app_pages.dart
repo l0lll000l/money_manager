@@ -12,8 +12,6 @@ import '../screens/transaction/all_transactions_binding.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/notifications/notifications_binding.dart';
 import '../screens/settings/help_support_screen.dart';
-import '../screens/settings/privacy_policy_screen.dart';
-import '../screens/settings/terms_of_service_screen.dart';
 
 part 'app_routes.dart';
 
@@ -63,16 +61,6 @@ class AppPages {
     GetPage(
       name: AppRoutes.helpSupport,
       page: () => const HelpSupportScreen(),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage(
-      name: AppRoutes.privacyPolicy,
-      page: () => const PrivacyPolicyScreen(),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage(
-      name: AppRoutes.termsOfService,
-      page: () => const TermsOfServiceScreen(),
       transition: Transition.rightToLeft,
     ),
   ];

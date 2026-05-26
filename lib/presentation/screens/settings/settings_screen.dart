@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_theme.dart';
 import 'settings_controller.dart';
 
@@ -76,13 +77,20 @@ class SettingsScreen extends StatelessWidget {
                 _buildNavigationTile(
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy Policy',
-                  onTap: () => Get.toNamed('/privacy_policy'),
+                  onTap: () async {
+                    final url = 'https://sites.google.com/view/auramoney/home';
+                    await launchUrl(Uri.parse(url));
+                  },
                 ),
                 _buildDivider(),
                 _buildNavigationTile(
                   icon: Icons.info_outline,
                   title: 'Terms of Service',
-                  onTap: () => Get.toNamed('/terms_of_service'),
+                  onTap: () async {
+                    final url =
+                        'https://sites.google.com/view/auramoneyterms/home';
+                    await launchUrl(Uri.parse(url));
+                  },
                 ),
               ],
             ),
