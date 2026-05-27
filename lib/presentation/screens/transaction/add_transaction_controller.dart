@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../../core/models/transaction_model.dart';
 import '../../../core/services/database_service.dart';
+import '../../widgets/shake_widget.dart';
 import '../dashboard/dashboard_controller.dart';
 import '../analytics/analytics_controller.dart';
 import '../budget/budget_controller.dart';
@@ -15,6 +16,9 @@ class AddTransactionController extends GetxController {
 
   final isEditing = false.obs;
   int? editingId;
+
+  final shakeAmountKey = GlobalKey<ShakeWidgetState>();
+  final shakeCategoryKey = GlobalKey<ShakeWidgetState>();
 
   @override
   void onInit() {
@@ -92,11 +96,11 @@ class AddTransactionController extends GetxController {
 
   void saveTransaction() async {
     if (amount.value == '0' || amount.value.isEmpty) {
-      Get.snackbar('Error', 'Please enter an amount');
+      shakeAmountKey.currentState?.shake();
       return;
     }
     if (selectedCategory.value.isEmpty) {
-      Get.snackbar('Error', 'Please select a category');
+      shakeCategoryKey.currentState?.shake();
       return;
     }
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../widgets/shake_widget.dart';
 import 'add_transaction_controller.dart';
 
 class AddTransactionScreen extends GetView<AddTransactionController> {
@@ -88,11 +89,14 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(
-                '\$',
-                style: Theme.of(
-                  context,
-                ).textTheme.displaySmall?.copyWith(color: color),
+              ShakeWidget(
+                key: controller.shakeAmountKey,
+                child: Text(
+                  '\$',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.displaySmall?.copyWith(color: color),
+                ),
               ),
               const SizedBox(width: 4),
               Text(
@@ -141,55 +145,59 @@ class AddTransactionScreen extends GetView<AddTransactionController> {
       children: [
         Text('Category', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 16),
-        Obx(
-          () => Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: controller.currentCategories.map((cat) {
-              final isSelected =
-                  controller.selectedCategory.value == cat['name'];
-              return GestureDetector(
-                onTap: () => controller.selectedCategory.value = cat['name']!,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primary : AppTheme.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected ? AppTheme.primary : AppTheme.divider,
+        ShakeWidget(
+          key: controller.shakeCategoryKey,
+          child: Obx(
+            () => Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: controller.currentCategories.map((cat) {
+                final isSelected =
+                    controller.selectedCategory.value == cat['name'];
+                return GestureDetector(
+                  onTap: () => controller.selectedCategory.value = cat['name']!,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _getIconForName(cat['icon']!),
-                        size: 16,
-                        color: isSelected
-                            ? Colors.white
-                            : AppTheme.textSecondary,
+                    decoration: BoxDecoration(
+                      color: isSelected ? AppTheme.primary : AppTheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isSelected ? AppTheme.primary : AppTheme.divider,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        cat['name']!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _getIconForName(cat['icon']!),
+                          size: 16,
                           color: isSelected
                               ? Colors.white
-                              : AppTheme.textPrimary,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+                              : AppTheme.textSecondary,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Text(
+                          cat['name']!,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: isSelected
+                                    ? Colors.white
+                                    : AppTheme.textPrimary,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           ),
         ),
       ],
