@@ -6,9 +6,11 @@ import 'presentation/routes/app_pages.dart';
 import 'package:get_storage/get_storage.dart';
 import 'core/services/database_service.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/ad_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AdService().init();
   await GetStorage.init();
   await Get.putAsync(() => DatabaseService().init());
 

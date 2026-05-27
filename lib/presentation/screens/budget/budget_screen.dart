@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../../core/theme/app_theme.dart';
 import 'budget_controller.dart';
 
@@ -24,6 +25,22 @@ class BudgetScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: Obx(() {
+        if (controller.isAdLoaded.value && controller.bannerAd != null) {
+          return Container(
+            color: AppTheme.background,
+            height: controller.bannerAd!.size.height.toDouble(),
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: SizedBox(
+              height: controller.bannerAd!.size.height.toDouble(),
+              width: controller.bannerAd!.size.width.toDouble(),
+              child: AdWidget(ad: controller.bannerAd!),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      }),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(

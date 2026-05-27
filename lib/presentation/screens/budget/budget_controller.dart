@@ -1,11 +1,16 @@
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../../core/services/database_service.dart';
+import '../../../core/services/ad_service.dart';
 
 class BudgetController extends GetxController {
   final dbService = Get.find<DatabaseService>();
 
   final budgets = <Map<String, dynamic>>[].obs;
   final savingsGoal = <String, dynamic>{}.obs;
+
+  BannerAd? bannerAd;
+  final isAdLoaded = false.obs;
 
   final Map<String, Map<String, String>> categoryMeta = {
     'Food': {'icon': 'utensils', 'color': '#F59E0B'},
@@ -23,6 +28,24 @@ class BudgetController extends GetxController {
   void onInit() {
     super.onInit();
     loadData();
+    _initAd();
+  }
+
+  void _initAd() {
+    bannerAd = AdService().createBannerAd(
+      onAdLoaded: () {
+        isAdLoaded.value = true;
+      },
+      onAdFailedToLoad: (ad, error) {
+        isAdLoaded.value = false;
+      },
+    )..load();
+  }
+
+  @override
+  void onClose() {
+    bannerAd?.dispose();
+    super.onClose();
   }
 
   Future<void> loadData() async {
