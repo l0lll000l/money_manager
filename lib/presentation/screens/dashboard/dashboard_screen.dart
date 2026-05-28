@@ -533,14 +533,14 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildDayOfWeekLabel(String label) {
     return Container(
-      height: 10,
+      height: 13,
       margin: const EdgeInsets.symmetric(vertical: 1.5),
       alignment: Alignment.centerLeft,
       child: Text(
         label,
         style: const TextStyle(
           color: AppTheme.textSecondary,
-          fontSize: 8,
+          fontSize: 9,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -559,7 +559,7 @@ class DashboardScreen extends StatelessWidget {
       if (showLabel) {
         children.add(
           Positioned(
-            left: index * 13.0,
+            left: index * 16.0,
             top: 0,
             child: Text(
               DateFormat('MMM').format(firstDayOfWeek),
@@ -576,7 +576,7 @@ class DashboardScreen extends StatelessWidget {
 
     return SizedBox(
       height: 14,
-      width: weeks.length * 13.0,
+      width: weeks.length * 16.0,
       child: Stack(clipBehavior: Clip.none, children: children),
     );
   }
@@ -619,12 +619,12 @@ class DashboardScreen extends StatelessWidget {
                 controller.selectedContribution.value = day;
               },
               child: Container(
-                width: 10,
-                height: 10,
+                width: 13,
+                height: 13,
                 margin: const EdgeInsets.all(1.5),
                 decoration: BoxDecoration(
                   color: cellColor,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(3),
                   border: isSelected
                       ? Border.all(color: AppTheme.textPrimary, width: 1.0)
                       : Border.all(color: Colors.transparent, width: 1.0),
