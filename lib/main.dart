@@ -18,7 +18,8 @@ void main() async {
   await notificationService.init();
   await notificationService.requestPermissions();
 
-  final notificationsEnabled = GetStorage().read('notificationsEnabled') ?? true;
+  final notificationsEnabled =
+      GetStorage().read('notificationsEnabled') ?? true;
   if (notificationsEnabled) {
     await notificationService.scheduleDailyReminders();
   }
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Aura Money Manager',
+      title: 'Aura Money',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme, // Only dark theme as requested
       themeMode: ThemeMode.dark,
