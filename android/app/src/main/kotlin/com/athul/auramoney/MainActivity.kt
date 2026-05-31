@@ -1,4 +1,4 @@
-package com.example.money_manager
+package com.athul.auramoney
 
 import io.flutter.embedding.android.FlutterActivity
 
