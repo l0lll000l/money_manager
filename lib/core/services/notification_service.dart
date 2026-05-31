@@ -77,7 +77,7 @@ class NotificationService {
       id: 2,
       title: 'Good Evening!',
       body: "Did you log all your expenses and income for today?",
-      hour: 20,
+      hour: 16,
       minute: 0,
     );
   }
