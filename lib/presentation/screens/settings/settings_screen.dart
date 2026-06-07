@@ -68,19 +68,7 @@ class SettingsScreen extends StatelessWidget {
             // ),
 
             // const SizedBox(height: 32),
-            _buildSectionHeader('Notifications'),
-            const SizedBox(height: 16),
-            _buildSettingsCard(
-              children: [
-                _buildSwitchTile(
-                  icon: Icons.notifications_none,
-                  title: 'Push Notifications',
-                  value: controller.notificationsEnabled,
-                  onChanged: controller.toggleNotifications,
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
+
             _buildSectionHeader('About'),
             const SizedBox(height: 16),
             _buildSettingsCard(
@@ -184,45 +172,6 @@ class SettingsScreen extends StatelessWidget {
       height: 1,
       indent: 64,
       endIndent: 24,
-    );
-  }
-
-
-
-  Widget _buildSwitchTile({
-    required IconData icon,
-    required String title,
-    required RxBool value,
-    required Function(bool) onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Row(
-        children: [
-          _buildIconContainer(icon),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Obx(
-            () => Switch(
-              value: value.value,
-              onChanged: onChanged,
-              activeThumbColor: AppTheme.primary,
-              activeTrackColor: AppTheme.primary.withValues(alpha: 0.5),
-              inactiveThumbColor: Colors.white54,
-              inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

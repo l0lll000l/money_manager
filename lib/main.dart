@@ -5,7 +5,6 @@ import 'presentation/routes/app_pages.dart';
 
 import 'package:get_storage/get_storage.dart';
 import 'core/services/database_service.dart';
-import 'core/services/notification_service.dart';
 import 'core/services/ad_service.dart';
 
 void main() async {
@@ -14,15 +13,6 @@ void main() async {
   await GetStorage.init();
   await Get.putAsync(() => DatabaseService().init());
 
-  final notificationService = NotificationService();
-  await notificationService.init();
-  await notificationService.requestPermissions();
-
-  final notificationsEnabled =
-      GetStorage().read('notificationsEnabled') ?? true;
-  if (notificationsEnabled) {
-    await notificationService.scheduleDailyReminders();
-  }
 
   runApp(const MyApp());
 }
