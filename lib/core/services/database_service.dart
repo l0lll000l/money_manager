@@ -82,14 +82,15 @@ class DatabaseService extends GetxService {
 
   // Savings Goal
   Map<String, dynamic> getSavingsGoal() {
-    return _storage.read<Map<String, dynamic>>(_savingsKey) ?? {
-      'title': 'New Goal',
-      'target': 1000.0,
-      'saved': 0.0,
-    };
+    return _storage.read<Map<String, dynamic>>(_savingsKey) ??
+        {'title': 'New Goal', 'target': 1000.0, 'saved': 0.0};
   }
 
-  Future<void> saveSavingsGoal(String title, double target, double saved) async {
+  Future<void> saveSavingsGoal(
+    String title,
+    double target,
+    double saved,
+  ) async {
     await _storage.write(_savingsKey, {
       'title': title,
       'target': target,
