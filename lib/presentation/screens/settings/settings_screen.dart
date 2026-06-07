@@ -187,35 +187,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStaticTile({
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        children: [
-          _buildIconContainer(icon),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(color: Colors.white70, fontSize: 16),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildSwitchTile({
     required IconData icon,

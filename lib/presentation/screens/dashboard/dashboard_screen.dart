@@ -259,37 +259,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Widget _buildActionButtons(BuildContext context) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 24),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //       children: [
-  //         _buildActionItem(context, LucideIcons.send, 'Transfer'),
-  //         _buildActionItem(context, LucideIcons.wallet, 'Top up'),
-  //         _buildActionItem(context, LucideIcons.layoutGrid, 'More'),
-  //       ],
-  //     ),
-  //   );
-  // }
 
-  Widget _buildActionItem(BuildContext context, IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppTheme.surface,
-            shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.divider),
-          ),
-          child: Icon(icon, color: AppTheme.textPrimary, size: 24),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
-      ],
-    );
-  }
 
   Widget _buildContributionCalendar(
     DashboardController controller,
