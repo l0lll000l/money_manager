@@ -15,19 +15,31 @@ class AllTransactionsScreen extends GetView<AllTransactionsController> {
       appBar: AppBar(
         backgroundColor: AppTheme.background,
         elevation: 0,
-        title: Obx(() => Text(controller.pageTitle.value, style: Theme.of(context).textTheme.headlineMedium)),
+        title: Obx(
+          () => Text(
+            controller.pageTitle.value,
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 20,
+          ),
           onPressed: () => Get.back(),
         ),
       ),
       body: Obx(() {
         if (controller.transactions.isEmpty) {
           return Center(
-            child: Text('No transactions yet', style: Theme.of(context).textTheme.bodyLarge),
+            child: Text(
+              'No transactions yet',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
           );
         }
-        
+
         return ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           itemCount: controller.transactions.length,
@@ -48,11 +60,7 @@ class AllTransactionsScreen extends GetView<AllTransactionsController> {
                   color: AppTheme.surfaceLight,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  iconData,
-                  color: AppTheme.textPrimary,
-                  size: 20,
-                ),
+                child: Icon(iconData, color: AppTheme.textPrimary, size: 20),
               ),
               title: Text(
                 tx['title'] as String,
